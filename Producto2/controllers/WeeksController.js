@@ -1,4 +1,11 @@
-const Week = require("/Producto2/models/Week");
+//const Week = require("/Producto2/models/Week");
+module.exports = {
+  getWeeks,
+  getWeekById,
+  createWeek,
+  updateWeekById,
+  deleteWeekById,
+};
 
 // Controlador para obtener todas las semanas
 exports.getWeeks = (req, res) => {

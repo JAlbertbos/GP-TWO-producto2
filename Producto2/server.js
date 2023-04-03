@@ -1,13 +1,26 @@
-const MongoClient = require('mongodb').MongoClient;
-const uri = 'mongodb+srv://jalbertbos:1234@agendasemanal.zbsfqm3.mongodb.net/AgendaSemanal'; // URI de conexión a su base de datos
-const client = new MongoClient(uri, { useNewUrlParser: true });
-client.connect((err) => {
-    if (err) throw err;
-    const db = client.db('AgendaSemanal'); // Nombre de su base de datos
-    // Realice operaciones CRUD aquí...
-    client.close(); // Cierra la conexión a la base de datos
-  });
+const { ApolloServer } = require('apollo-server');
+const { typeDefs, resolvers } = require('./graphql');
+const { MongoClient } = require('mongodb');
 
-  const Task = require('Producto2/models/Task');
-  const Task = require('Producto2/models/Week');
+const uri = 'mongodb+srv://lau:1234@agendasemanal.zbsfqm3.mongodb.net/AgendaSemanal';
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  context: async () => {
+    try {
+      await client.connect();
+      const db = client.db('AgendaSemanal');
+      const semanasCollection = db.collection('semanas');
+      return { semanasCollection };
+    } catch (error) {
+      console.error('Error al conectar con MongoDB:', error);
+    }
+  },
+});
+
+const PORT = process.env.PORT || 3000;
+server.listen(PORT).then(({ url }) => {
+  console.log(`Servidor escuchando en ${url}`);
+});
