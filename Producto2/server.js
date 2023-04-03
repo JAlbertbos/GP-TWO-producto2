@@ -1,5 +1,5 @@
 const MongoClient = require('mongodb').MongoClient;
-const uri = 'mongodb+srv://David:1234@agendasemanal.zbsfqm3.mongodb.net/AgendaSemanal'; // URI de conexión a su base de datos
+const uri = 'mongodb+srv://David:@agendasemanal.zbsfqm3.mongodb.net/AgendaSemanal'; // URI de conexión a su base de datos
 const client = new MongoClient(uri, { useNewUrlParser: true });
 client.connect((err) => {
     if (err) throw err;
