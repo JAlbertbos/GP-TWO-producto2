@@ -1,3 +1,6 @@
+import Week from "../models/Week";
+const path = require('path');
+
 const Week = require("/Producto2/models/Week");
 
 // Controlador para obtener todas las semanas

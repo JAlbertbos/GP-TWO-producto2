@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import { mongoDbUrl } from './config.mjs'
+import { mongoDbUrl } from './config.js'
 
 //Conexión con la base de datos
 mongoose.connect(mongoDbUrl)
