@@ -1,13 +1,34 @@
-const MongoClient = require('mongodb').MongoClient;
-const uri = 'mongodb+srv://jalbertbos:1234@agendasemanal.zbsfqm3.mongodb.net/AgendaSemanal'; // URI de conexión a su base de datos
-const client = new MongoClient(uri, { useNewUrlParser: true });
-client.connect((err) => {
-    if (err) throw err;
-    const db = client.db('AgendaSemanal'); // Nombre de su base de datos
-    // Realice operaciones CRUD aquí...
-    client.close(); // Cierra la conexión a la base de datos
-  });
+const express = require('express');
+const mongoose = require('mongoose');
+const { ApolloServer } = require('apollo-server-express');
+const { typeDefs } = require('./graphql/types');
+const { resolvers } = require('./graphql/resolvers');
+const WeekController = require('./controllers/WeekController');
 
-  const Task = require('Producto2/models/Task');
-  const Task = require('Producto2/models/Week');
+const app = express();
+app.use(express.json());
 
+// Conexión a la base de datos
+mongoose.connect('<your-mongodb-connection-string>', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+// Configuración de Apollo Server
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+});
+server.applyMiddleware({ app });
+
+// Rutas para Weeks
+app.get('/weeks', WeekController.getAll);
+app.post('/weeks', WeekController.create);
+app.delete('/weeks/:id', WeekController.delete);
+
+// Iniciar el servidor HTTP
+const PORT = 8080;
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`GraphQL endpoint: http://localhost:${PORT}${server.graphqlPath}`);
+});
