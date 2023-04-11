@@ -1,13 +1,20 @@
-const MongoClient = require('mongodb').MongoClient;
-const uri = 'mongodb+srv://jalbertbos:1234@agendasemanal.zbsfqm3.mongodb.net/AgendaSemanal'; // URI de conexión a su base de datos
-const client = new MongoClient(uri, { useNewUrlParser: true });
-client.connect((err) => {
-    if (err) throw err;
-    const db = client.db('AgendaSemanal'); // Nombre de su base de datos
-    // Realice operaciones CRUD aquí...
-    client.close(); // Cierra la conexión a la base de datos
+
+const express = require('express');
+const mongoose = require('mongoose');
+const config = require('./config');
+
+const app = express();
+
+// Conexión a la base de datos MongoDB
+mongoose.connect(config.databaseURL, { useNewUrlParser: true })
+  .then(() => {
+    console.log('Conexión a MongoDB exitosa');
+    app.listen(config.port, () => {
+      console.log(`Servidor web escuchando en el puerto ${config.port}`);
+    });
+  })
+  .catch((err) => {
+    console.error(`Error de conexión a MongoDB: ${err}`);
   });
 
-  const Task = require('Producto2/models/Task');
-  const Task = require('Producto2/models/Week');
 
