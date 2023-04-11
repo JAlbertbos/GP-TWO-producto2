@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const config = require('./config');
+const config = require("/Producto2/config/database.js");
 
 // Conexión a la base de datos MongoDB
 mongoose.connect(config.databaseURL, { useNewUrlParser: true })
