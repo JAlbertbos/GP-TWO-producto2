@@ -5,7 +5,7 @@ const path = require('path');
 const app = express();
 
 // Conexión con MongoDB
-const MONGODB_URI = 'mongodb+srv://Jalbertbos:1234@agendasemanal.zbsfqm3.mongodb.net/AgendaSemanal';
+const MONGODB_URI = 'mongodb+srv://David:1234@agendasemanal.zbsfqm3.mongodb.net/AgendaSemanal';
 
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
@@ -33,51 +33,7 @@ app.use(express.json());
 // Rutas de la aplicación
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'Dashboard.html'));
-});
-
-app.get('/api/tareas', async (req, res) => {
-  try {
-    const tareas = await Tarea.find();
-    res.json(tareas);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error interno del servidor' });
-  }
-});
-
-app.post('/api/tareas', async (req, res) => {
-  try {
-    const { titulo, descripcion, fecha } = req.body;
-    const tarea = new Tarea({ titulo, descripcion, fecha });
-    await tarea.save();
-    res.json(tarea);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error interno del servidor' });
-  }
-});
-
-app.put('/api/tareas/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { titulo, descripcion, fecha } = req.body;
-    const tarea = await Tarea.findByIdAndUpdate(id, { titulo, descripcion, fecha }, { new: true });
-    res.json(tarea);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error interno del servidor' });
-  }
-});
-
-app.delete('/api/tareas/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    await Tarea.findByIdAndDelete(id);
-    res.json({ message: 'Tarea eliminada correctamente' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error interno del servidor' });
-  }
+  res.sendFile(path.join(__dirname, 'Weektasks.html'));
 });
 
 // Iniciar el servidor
