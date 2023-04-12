@@ -5,7 +5,7 @@ const path = require('path');
 const app = express();
 
 // Conexión con MongoDB
-const MONGODB_URI = 'mongodb+srv://jalbertbos:1234@agendasemanal.zbsfqm3.mongodb.net/AgendaSemanal';
+const MONGODB_URI = 'mongodb+srv://David:1234@agendasemanal.zbsfqm3.mongodb.net/AgendaSemanal';
 
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
@@ -32,7 +32,7 @@ app.use(express.json());
 
 // Rutas de la aplicación
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, "/Producto2/Dashboard.html"));
+  res.sendFile(path.join(__dirname, 'Dashboard.html'));
 });
 
 app.get('/api/tareas', async (req, res) => {
