@@ -1,37 +1,52 @@
-const Task = require("/models/Task");
-
-// Controlador para obtener todas las tareas
-exports.getTasks = (req, res) => {
-  Task.find()
-    .then(tasks => res.json(tasks))
-    .catch(err => res.status(500).json({ error: err }));
+// Agregar una nueva tarea
+const taskData = {
+  id_week: 1,
+  name: 'Nueva tarea',
+  startTime: '2022-04-18T08:00:00.000Z',
+  endTime: '2022-04-18T09:00:00.000Z',
+  description: 'Descripción de la nueva tarea',
+  participants: 2,
+  isCompleted: false
 };
 
-// Controlador para obtener una tarea por su ID
-exports.getTaskById = (req, res) => {
-  Task.findById(req.params.taskId)
-    .then(task => res.json(task))
-    .catch(err => res.status(500).json({ error: err }));
+fetch('/tasks', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify(taskData),
+})
+  .then((response) => response.json())
+  .then((data) => console.log(data))
+  .catch((error) => console.error(error));
+
+// Actualizar una tarea existente
+const taskId = 1;
+const updatedTaskData = {
+  id_week: 1,
+  name: 'Tarea actualizada',
+  startTime: '2022-04-18T09:00:00.000Z',
+  endTime: '2022-04-18T10:00:00.000Z',
+  description: 'Descripción de la tarea actualizada',
+  participants: 3,
+  isCompleted: true
 };
 
-// Controlador para crear una nueva tarea
-exports.createTask = (req, res) => {
-  const newTask = new Task(req.body);
-  newTask.save()
-    .then(task => res.json(task))
-    .catch(err => res.status(500).json({ error: err }));
-};
+fetch(`/tasks/${taskId}`, {
+  method: 'PUT',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify(updatedTaskData),
+})
+  .then((response) => response.json())
+  .then((data) => console.log(data))
+  .catch((error) => console.error(error));
 
-// Controlador para actualizar una tarea por su ID
-exports.updateTaskById = (req, res) => {
-  Task.findByIdAndUpdate(req.params.taskId, req.body, { new: true })
-    .then(task => res.json(task))
-    .catch(err => res.status(500).json({ error: err }));
-};
-
-// Controlador para eliminar una tarea por su ID
-exports.deleteTaskById = (req, res) => {
-  Task.findByIdAndDelete(req.params.taskId)
-  .then(() => res.json({ message: 'Task deleted successfully' }))
-  .catch(err => res.status(500).json({ error: err }));
-};
+// Eliminar una tarea existente
+fetch(`/tasks/${taskId}`, {
+  method: 'DELETE',
+})
+  .then((response) => response.json())
+  .then((data) => console.log(data))
+  .catch((error) => console.error(error));

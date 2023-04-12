@@ -4,7 +4,7 @@ const weekSchema = new mongoose.Schema({
   id_week: Number,
   name: String,
   number: Number,
-  month: Number,
+  Priority: String,
   year: Number,
   colour: String,
   description: String

@@ -1,37 +1,49 @@
-const Week = require("/models/Week");
-
-// Controlador para obtener todas las semanas
-exports.getWeeks = (req, res) => {
-  Week.find()
-    .then(weeks => res.json(weeks))
-    .catch(err => res.status(500).json({ error: err }));
+const weekData = {
+  name: 'Semana 1',
+  number: 1,
+  priority: 'Alta',
+  year: 2022,
+  colour: 'Rojo',
+  description: 'Descripción de la semana 1',
 };
 
-// Controlador para obtener una semana por su ID
-exports.getWeekById = (req, res) => {
-  Week.findById(req.params.weekId)
-    .then(week => res.json(week))
-    .catch(err => res.status(500).json({ error: err }));
+fetch('/weeks', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify(weekData),
+})
+  .then((response) => response.json())
+  .then((data) => console.log(data))
+  .catch((error) => console.error(error));
+
+  const id = 1;
+const updatedWeekData = {
+  name: 'Semana actualizada',
+  number: 1,
+  priority: 'Baja',
+  year: 2022,
+  colour: 'Verde',
+  description: 'Descripción de la semana actualizada',
 };
 
-// Controlador para crear una nueva semana
-exports.createWeek = (req, res) => {
-  const newWeek = new Week(req.body);
-  newWeek.save()
-    .then(week => res.json(week))
-    .catch(err => res.status(500).json({ error: err }));
-};
+fetch(`/weeks/${id}`, {
+  method: 'PUT',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify(updatedWeekData),
+})
+  .then((response) => response.json())
+  .then((data) => console.log(data))
+  .catch((error) => console.error(error));
 
-// Controlador para actualizar una semana por su ID
-exports.updateWeekById = (req, res) => {
-  Week.findByIdAndUpdate(req.params.weekId, req.body, { new: true })
-    .then(week => res.json(week))
-    .catch(err => res.status(500).json({ error: err }));
-};
-
-// Controlador para eliminar una semana por su ID
-exports.deleteWeekById = (req, res) => {
-  Week.findByIdAndDelete(req.params.weekId)
-    .then(() => res.json({ message: 'Week deleted successfully' }))
-    .catch(err => res.status(500).json({ error: err }));
-};
+//eliminar
+  fetch(`/weeks/${id}`, {
+    method: 'DELETE',
+  })
+    .then((response) => response.json())
+    .then((data) => console.log(data))
+    .catch((error) => console.error(error));
+  
