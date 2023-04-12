@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const config = require("/Producto2/config/database.js");
+const config = require('mongodb+srv://David:1234@agendasemanal.zbsfqm3.mongodb.net/AgendaSemanal');
 
 // Conexión a la base de datos MongoDB
 mongoose.connect(config.databaseURL, { useNewUrlParser: true })
