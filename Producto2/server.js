@@ -5,7 +5,7 @@ const path = require('path');
 const app = express();
 
 // Conexión con MongoDB
-const MONGODB_URI = 'mongodb+srv://David:1234@agendasemanal.zbsfqm3.mongodb.net/AgendaSemanal';
+const MONGODB_URI = 'mongodb+srv://Jalbertbos:1234@agendasemanal.zbsfqm3.mongodb.net/AgendaSemanal';
 
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
