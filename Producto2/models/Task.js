@@ -1,10 +1,6 @@
-// Llamada a mongoose
 const mongoose = require('mongoose');
 
-// Creacion del Schema
-const Schema = mongoose.Schema;
-
-const taskSchema = new Schema({
+const taskSchema = new mongoose.Schema({
   id_task: Number,
   id_week: Number,
   name: String,

@@ -1,11 +1,6 @@
-// Llamada a mongoose
 const mongoose = require('mongoose');
 
-// Creacion del Schema
-const Schema = mongoose.Schema;
-
-
-const weekSchema = new Schema({
+const weekSchema = new mongoose.Schema({
   id_week: Number,
   name: String,
   number: Number,
@@ -15,8 +10,4 @@ const weekSchema = new Schema({
   description: String
 });
 
-const Week = mongoose.model('Week',weekSchema);
-
 module.exports = mongoose.model('Week', weekSchema);
-
-

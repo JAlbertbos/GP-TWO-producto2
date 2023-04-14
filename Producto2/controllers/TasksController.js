@@ -1,5 +1,3 @@
-import Task from "../models/Task";//importaremos el módulo,para poder utilizarlo en la lógica de nuestro controlador
-const path = require('path'); //acceder a las utilidades que nos permitirán establecer la ruta en el formulario 
 const Task = require("Producto2/models/Task");
 
 // Controlador para obtener todas las tareas
