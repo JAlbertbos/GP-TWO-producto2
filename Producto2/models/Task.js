@@ -1,14 +1,30 @@
 const mongoose = require('mongoose');
 
 const taskSchema = new mongoose.Schema({
-  id_task: Number,
-  id_week: Number,
-  name: String,
-  startTime: Date,
-  endTime: Date,
-  description: String,
-  participants: Number,
-  isCompleted: Boolean
+    name: {
+        type: String,
+        required: true
+    },
+    description: {
+        type: String,
+        required: true
+    },
+    priority: {
+        type: String,
+        required: true
+    },
+    week: {
+        type: Number,
+        required: true
+    },
+    year: {
+        type: Number,
+        required: true
+    },
+    color: {
+        type: String,
+        default: "black"
+    }
 });
 
 module.exports = mongoose.model('Task', taskSchema);
