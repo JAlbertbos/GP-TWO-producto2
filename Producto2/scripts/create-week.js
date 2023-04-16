@@ -1,14 +1,63 @@
 document.addEventListener("DOMContentLoaded", () => {
-
   const confirmBtn = document.getElementById("confirmButton");
   const cardForm = document.getElementById("cardForm");
 
-  //Funcion para generar id random
+  async function fetchGraphQL(query, variables) {
+    const response = await fetch('/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({
+        query: query,
+        variables: variables,
+      }),
+    });
+    return await response.json();
+  }
+
+  // Funcion para generar id random
   function generateRandomId() {
     return Math.floor(Math.random() * 1000000);
   }
-  //Creacion de tarjetas
-  function createCard(name, id, week, priority, year, description) {
+
+  // Creacion de tarjetas
+  async function createCard(name, id, week, priority, year, description) {
+    // Crear la tarea en el servidor a través de GraphQL
+    const query = `
+      mutation CreateTask($title: String!, $description: String, $dueDate: String) {
+        createTask(title: $title, description: $description, dueDate: $dueDate) {
+          id
+        }
+      }
+    `;
+
+    const dueDate = new Date(year, 0, 1); // Comienza en el primer día del año
+    dueDate.setDate(dueDate.getDate() + (week - 1) * 7); // Ajusta la fecha según la semana
+
+    const variables = {
+      title: name,
+      description: description,
+      dueDate: dueDate.toISOString(),
+    };
+
+    try {
+      const result = await fetchGraphQL(query, variables);
+      if (result.errors) {
+        console.error(result.errors);
+        // Muestra un mensaje de error genérico
+        mostrarModal("Ocurrió un error al guardar la tarea en el servidor.");
+        return;
+      }
+    } catch (error) {
+      console.error(error);
+      // Muestra un mensaje de error genérico
+      mostrarModal("Ocurrió un error al guardar la tarea en el servidor.");
+      return;
+    }
+
+    // Añade la tarea al DOM
     const cardContainer = document.createElement("div");
     cardContainer.classList.add("col-md-4", "mb-4");
 
@@ -36,120 +85,116 @@ document.addEventListener("DOMContentLoaded", () => {
     mainRow.appendChild(cardContainer);
 
     // Escuchar eventos de click en los iconos de eliminar
-    const deleteIcons = document.querySelectorAll(".bi-trash");
-    deleteIcons.forEach((icon) => {
-      icon.addEventListener("click", (event) => {
-        const card = event.target.closest(".card");
-        const cardId = card.getAttribute("data-id");
-        const deleteCardBtn = document.getElementById("eliminarTarjetaBtn");
-        deleteCardBtn.setAttribute("data-card", cardId);
-      });
-    });
-
-    // Escuchar evento de click en el botón de eliminar tarjeta
-    const deleteCardBtn = document.querySelector("#eliminarTarjetaBtn");
-    deleteCardBtn.addEventListener("click", () => {
-      const cardId = deleteCardBtn.getAttribute("data-card");
-      const card = document.querySelector(`[data-id="${cardId}"]`);
-      if (card) {
-        card.closest('.col-md-4.mb-4').remove();
-        const eliminarTarjetaModalEl = document.getElementById("eliminarTarjetaModal");
-        const eliminarTarjetaModal = bootstrap.Modal.getInstance(eliminarTarjetaModalEl);
-        eliminarTarjetaModal.hide();
-      }
-    });
-
+const deleteIcons = document.querySelectorAll(".bi-trash");
+deleteIcons.forEach((icon) => {
+icon.addEventListener("click", (event) => {
+const card = event.target.closest(".card");
+const cardId = card.getAttribute("data-id");
+const deleteCardBtn = document.getElementById("eliminarTarjetaBtn");
+deleteCardBtn.setAttribute("data-card", cardId);
+});
+});
+// Escuchar evento de click en el botón de eliminar tarjeta
+const deleteCardBtn = document.querySelector("#eliminarTarjetaBtn");
+deleteCardBtn.addEventListener("click", () => {
+  const cardId = deleteCardBtn.getAttribute("data-card");
+  const card = document.querySelector(`[data-id="${cardId}"]`);
+  if (card) {
+    card.closest('.col-md-4.mb-4').remove();
+    const eliminarTarjetaModalEl = document.getElementById("eliminarTarjetaModal");
+    const eliminarTarjetaModal = bootstrap.Modal.getInstance(eliminarTarjetaModalEl);
+    eliminarTarjetaModal.hide();
   }
-  // La función deleteCard elimina una tarjeta del DOM.
-  function deleteCard(cardContainer) {
-    cardContainer.remove();
-  }
-
-
-  function mostrarModal(mensaje) {
-    const modal = new bootstrap.Modal(document.getElementById("genericModal"));
-    const mensajeModal = document.getElementById("genericModalMessage");
-    mensajeModal.innerText = mensaje;
-    modal.show();
-  }
-
-  confirmBtn.addEventListener("click", (e) => {
-    var formulario = document.getElementById("cardForm");
-    var inputsRequeridos = formulario.querySelectorAll("[required]");
-
-    var valido = true;
-
-    for (var i = 0; i < inputsRequeridos.length; i++) {
-      if (!inputsRequeridos[i].value) {
-        valido = false;
-        break;
-      }
-    }
-
-    if (valido) {
-      e.preventDefault();
-      let name = document.getElementById("name").value;
-      let week = document.getElementById("week").value;
-      let priority = document.getElementById("priority").value;
-      let year = document.getElementById("year").value;
-      let description = document.getElementById("description").value;
-
-      let prioritySelect = document.getElementById("priority");
-      let priorityText = prioritySelect.options[prioritySelect.selectedIndex].text;
-
-      // validar Nombre
-const nameRegex = /^[a-zA-ZáéíóúñÁÉÍÓÚÑ0-9\s]+$/;
-if (!nameRegex.test(name)) {
-  mostrarModal("Por favor ingrese un nombre válido.");
-  return;
+});
 }
 
-      // validar  Semana
-      const weekRegex = /^(0?[1-9]|[1-4][0-9]|5[0-3])$/;
-      if (!weekRegex.test(week)) {
-        mostrarModal("Por favor ingrese un número de semana válido (entre 01 y 53).");
-        return;
-      }
+// La función deleteCard elimina una tarjeta del DOM.
+function deleteCard(cardContainer) {
+cardContainer.remove();
+}
 
-      // validar campo de prioridad
-      if (!document.getElementById("priority").value || document.getElementById("priority").value === "") {
-        mostrarModal("Por favor, seleccione una prioridad.");
-        return;
-      }
+function mostrarModal(mensaje) {
+const modal = new bootstrap.Modal(document.getElementById("genericModal"));
+const mensajeModal = document.getElementById("genericModalMessage");
+mensajeModal.innerText = mensaje;
+modal.show();
+}
 
-      // validar  campo de año
-      const yearRegex = /^\d{4}$/;
-      if (!yearRegex.test(year)) {
-        mostrarModal("Por favor ingrese un año válido (formato: AAAA).");
-        return;
-      }
+confirmBtn.addEventListener("click", async (e) => {
+var formulario = document.getElementById("cardForm");
+var inputsRequeridos = formulario.querySelectorAll("[required]");
+var valido = true;
 
-      if (!description) {
-        mostrarModal("Por favor ingrese una descripción.");
-        return;
-      }
+for (var i = 0; i < inputsRequeridos.length; i++) {
+  if (!inputsRequeridos[i].value) {
+    valido = false;
+    break;
+  }
+}
 
-      const id = generateRandomId();
+if (valido) {
+  e.preventDefault();
+  let name = document.getElementById("name").value;
+  let week = document.getElementById("week").value;
+  let priority = document.getElementById("priority").value;
+  let year = document.getElementById("year").value;
+  let description = document.getElementById("description").value;
 
-      createCard(name, id, week, priorityText, year, description);
+  let prioritySelect = document.getElementById("priority");
+  let priorityText = prioritySelect.options[prioritySelect.selectedIndex].text;
 
-      // Cerrar el modal
-      const nuevaSemanaModal = document.getElementById("nuevaSemanaModal");
-      const modal = bootstrap.Modal.getInstance(nuevaSemanaModal);
-      modal.hide();
+  // validar Nombre
+  const nameRegex = /^[a-zA-ZáéíóúñÁÉÍÓÚÑ0-9\s]+$/;
+  if (!nameRegex.test(name)) {
+    mostrarModal("Por favor ingrese un nombre válido.");
+    return;
+  }
 
-      // Limpiar el formulario
-      cardForm.reset();
-    } else {
-      mostrarModal("Faltan campos por completar");
-    }
-  });
+  // validar  Semana
+  const weekRegex = /^(0?[1-9]|[1-4][0-9]|5[0-3])$/;
+  if (!weekRegex.test(week)) {
+    mostrarModal("Por favor ingrese un número de semana válido (entre 01 y 53).");
+    return;
+  }
 
-  document.querySelectorAll(".delete-icon").forEach((deleteIcon) => {
-    deleteIcon.addEventListener("click", (e) => {
-      e.preventDefault();
-      const cardContainer = e.target.closest(".col-md-4.mb-4");
-      deleteCard(cardContainer);
-    });
-  });
+  // validar campo de prioridad
+  if (!document.getElementById("priority").value || document.getElementById("priority").value === "") {
+    mostrarModal("Por favor, seleccione una prioridad.");
+    return;
+  }
+
+  // validar  campo de año
+  const yearRegex = /^\d{4}$/;
+  if (!yearRegex.test(year)) {
+    mostrarModal("Por favor ingrese un año válido (formato: AAAA).");
+    return;
+  }
+
+  if (!description) {
+    mostrarModal("Por favor ingrese una descripción.");
+    return;
+  }
+
+  const id = generateRandomId();
+
+  await createCard(name, id, week, priorityText, year, description);
+
+  // Cerrar el modal
+  const nuevaSemanaModal= document.getElementById("nuevaSemanaModal");
+  const modal = bootstrap.Modal.getInstance(nuevaSemanaModal);
+  modal.hide();
+  // Limpiar el formulario
+  cardForm.reset();
+} else {
+  mostrarModal("Faltan campos por completar");
+}
+});
+
+document.querySelectorAll(".delete-icon").forEach((deleteIcon) => {
+deleteIcon.addEventListener("click", (e) => {
+e.preventDefault();
+const cardContainer = e.target.closest(".col-md-4.mb-4");
+deleteCard(cardContainer);
+});
+});
 });
