@@ -17,10 +17,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return await response.json();
   }
 
-  function generateRandomId() {
-    return Math.floor(Math.random() * 1000000);
-  }
-
   async function createCard(name, week, priority, year, description) {
     const query = `
       mutation CreateTask($title: String!, $description: String, $dueDate: String) {
@@ -43,21 +39,21 @@ document.addEventListener("DOMContentLoaded", () => {
       const result = await fetchGraphQL(query, variables);
       if (result.errors) {
         console.error(result.errors);
-        mostrarModal("Ocurrió un error al guardar la tarea en el servidor.");
+        mostrarModal("Ocurrió un error al guardar la semana en el servidor.");
         return;
       }
       // Aquí necesitas obtener el ID generado por GraphQL en lugar de generar uno aleatorio
       const id = result.data.createTask.id;
       // Llama a la función addCardToDOM con el ID generado
-      addCardToDOM(name, id, week, priority, year, description);
+      addCardToDOM(name, id, priority, year, description);
     } catch (error) {
       console.error(error);
-      mostrarModal("Ocurrió un error al guardar la tarea en el servidor.");
+      mostrarModal("Ocurrió un error al guardar la semana en el servidor.");
       return;
     }
   }
 
-  function addCardToDOM(name, id, week, priority, year, description) {
+  function addCardToDOM(name, id, priority, year, description) {
     const cardContainer = document.createElement("div");
     cardContainer.classList.add("col-md-4", "mb-4");
 
@@ -119,7 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // ...
 
       // Llama a la función createCard con los datos del formulario
-      await createCard(name, week, priorityText, year, description);
+      await createCard(name, week, priority, year, description);
 
       // Cerrar el modal
       const nuevaSemanaModal = document.getElementById("nuevaSemanaModal");

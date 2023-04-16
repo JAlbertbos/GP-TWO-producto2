@@ -7,6 +7,8 @@ const resolvers = require('./graphql/resolvers');
 
 const app = express();
 
+
+
 // Conexión con MongoDB
 const MONGODB_URI = 'mongodb+srv://David:1234@agendasemanal.zbsfqm3.mongodb.net/AgendaSemanal';
 
@@ -19,15 +21,18 @@ const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', () => console.log('Connected to MongoDB'));
 
-// Configurar Express para servir archivos estáticos y estilos CSS
+
 app.use(express.static(path.join(__dirname)));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 // Rutas de la aplicación
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'Dashboard.html'));
-  res.sendFile(path.join(__dirname, 'Weektasks.html'));
+  res.sendFile(path.join(__dirname, 'Producto2', 'Dashboard.html'));
+});
+
+app.get('/weektasks', (req, res) => {
+  res.sendFile(path.join(__dirname, 'Producto2', 'Weektasks.html'));
 });
 
 // Ruta para GraphQL
