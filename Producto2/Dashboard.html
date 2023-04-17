@@ -5,9 +5,9 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="/Producto2/bootstrap/bootstrap.min.css">
+  <link rel="stylesheet" href="/bootstrap/bootstrap.min.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
-  <link rel="stylesheet" type="text/css" href="/Producto2/styles/Dashboard.css">
+  <link rel="stylesheet" type="text/css" href="/styles/Dashboard.css">
   <title>GP-TWO</title>
 </head>
 <body class="d-flex flex-column min-vh-100">
@@ -18,6 +18,9 @@
         <i class="bi bi-plus botonmas"></i>
       </button>
       <h1 class="text-center text-white m-0">Gestor Semanal</h1>
+      <button class="btn btn-light botonNueva">
+        <i class="bi bi-x botonNueva"></i>
+      </button>
     </div>
   </header>
   <main class="container my-5 flex-grow-1">
@@ -47,12 +50,7 @@
                 <input type="number" id="week" class="form-control" placeholder="Semana" min="1" max="53" required>
               </div>
               <div class="col-md-4 mb-3">
-                <select class="form-select" id="priority" required>
-                  <option value="" disabled selected>Prioridad</option>
-                  <option value="1">Alta</option>
-                  <option value="2">Media</option>
-                  <option value="3">Baja</option>
-                </select>
+                <input type="number" id="month" class="form-control" placeholder="Mes" min="1" max="12" required>
               </div>
               <div class="col-md-4 mb-3">
                 <input type="number" id="year" class="form-control" placeholder="Año" min="2023" required>
@@ -79,6 +77,8 @@
       </div>
     </div>
   </div>
+
+
   <!-- Modal genérica -->
   <div class="modal fade" id="genericModal" tabindex="-1" aria-labelledby="genericModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
