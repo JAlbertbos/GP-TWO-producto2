@@ -18,9 +18,6 @@ app.use('/graphql', graphqlHTTP({
     graphiql: true,
   }));
   
-  app.listen(config.PORT, () => {
-    console.log(`Servidor escuchando en el puerto ${config.PORT}`);
-  });
 
 // Conexión a la base de datos MongoDB
 database.on('error', console.error.bind(console, 'Error de conexión a MongoDB:'));
