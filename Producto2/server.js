@@ -5,8 +5,16 @@ const config = require('./config/config');
 const database = require('./config/database');
 const schema = require('./graphql/schema');
 const resolvers = require('./graphql/resolvers');
+const path = require('path'); 
 
 const app = express();
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'Dashboard.html'));
+});
+
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -78,3 +86,4 @@ app.delete('/tasks/:id', async (req, res) => {
 app.listen(config.PORT, () => {
   console.log(`Servidor escuchando en el puerto ${config.PORT}`);
 });
+
