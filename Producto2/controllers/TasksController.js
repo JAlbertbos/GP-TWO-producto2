@@ -1,4 +1,4 @@
-const Task = require("/models/Task");
+const Task = require("../../models/Task");
 
 // Controlador para obtener todas las tareas
 exports.getTasks = (req, res) => {

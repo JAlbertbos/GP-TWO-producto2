@@ -50,6 +50,11 @@ const resolvers = {
   createWeek: async (args) => {
     const newWeek = new Week({
       name: args.name,
+      week: args.week,
+      priority: args.priority,
+      year: args.year,
+      description: args.description,
+      color: args.color,
     });
 
     return await newWeek.save();
@@ -57,10 +62,16 @@ const resolvers = {
   updateWeek: async (args) => {
     const update = {
       ...(args.name && { name: args.name }),
+      ...(args.week && { week: args.week }),
+      ...(args.priority && { priority: args.priority }),
+      ...(args.year && { year: args.year }),
+      ...(args.description && { description: args.description }),
+      ...(args.color && { color: args.color }),
     };
 
     return await Week.findByIdAndUpdate(args.id, update, { new: true }).populate('tasks');
   },
+  
   deleteWeek: async (args) => {
     return await Week.findByIdAndDelete(args.id);
   },
