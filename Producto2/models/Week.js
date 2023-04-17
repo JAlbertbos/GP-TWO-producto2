@@ -1,13 +1,36 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const weekSchema = new mongoose.Schema({
-  id_week: Number,
-  name: String,
-  number: Number,
-  month: Number,
-  year: Number,
-  colour: String,
-  description: String
+const WeekSchema = new Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  week: {
+    type: Number,
+    required: true,
+  },
+  priority: {
+    type: String,
+    enum: ['Alta', 'Media', 'Baja'],
+    required: true,
+  },
+  year: {
+    type: Number,
+    required: true,
+  },
+  description: {
+    type: String,
+    required: true,
+  },
+  borderColor: {
+    type: String,
+    required: true,
+  },
+  tasks: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Task',
+  }],
 });
 
-module.exports = mongoose.model('Week', weekSchema);
+module.exports = mongoose.model('Week', WeekSchema);

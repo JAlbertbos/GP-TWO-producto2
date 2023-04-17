@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
-const config = require('mongodb+srv://David:1234@agendasemanal.zbsfqm3.mongodb.net/AgendaSemanal');
+const config = require('./config');
 
 // Conexión a la base de datos MongoDB
-mongoose.connect(config.databaseURL, { useNewUrlParser: true })
+mongoose.connect(config.databaseURL, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log('Conexión a MongoDB exitosa');
   })

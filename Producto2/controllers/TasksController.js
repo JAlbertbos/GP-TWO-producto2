@@ -1,37 +1,22 @@
-const Task = require("/models/Task");
+const Task = require('../models/Task');
 
-// Controlador para obtener todas las tareas
-exports.getTasks = (req, res) => {
-  Task.find()
-    .then(tasks => res.json(tasks))
-    .catch(err => res.status(500).json({ error: err }));
+exports.getTasks = async () => {
+  return await Task.find();
 };
 
-// Controlador para obtener una tarea por su ID
-exports.getTaskById = (req, res) => {
-  Task.findById(req.params.taskId)
-    .then(task => res.json(task))
-    .catch(err => res.status(500).json({ error: err }));
+exports.getTaskById = async (id) => {
+  return await Task.findById(id);
 };
 
-// Controlador para crear una nueva tarea
-exports.createTask = (req, res) => {
-  const newTask = new Task(req.body);
-  newTask.save()
-    .then(task => res.json(task))
-    .catch(err => res.status(500).json({ error: err }));
+exports.createTask = async (taskData) => {
+  const task = new Task(taskData);
+  return await task.save();
 };
 
-// Controlador para actualizar una tarea por su ID
-exports.updateTaskById = (req, res) => {
-  Task.findByIdAndUpdate(req.params.taskId, req.body, { new: true })
-    .then(task => res.json(task))
-    .catch(err => res.status(500).json({ error: err }));
+exports.updateTask = async (id, taskData) => {
+  return await Task.findByIdAndUpdate(id, taskData, { new: true });
 };
 
-// Controlador para eliminar una tarea por su ID
-exports.deleteTaskById = (req, res) => {
-  Task.findByIdAndDelete(req.params.taskId)
-  .then(() => res.json({ message: 'Task deleted successfully' }))
-  .catch(err => res.status(500).json({ error: err }));
+exports.deleteTask = async (id) => {
+  return await Task.findByIdAndRemove(id);
 };
