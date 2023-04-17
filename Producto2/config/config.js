@@ -1,3 +1,5 @@
-// Iniciar el servidor
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Servidor web iniciado en el puerto ${PORT}`));
+module.exports = {
+    databaseURL: 'mongodb+srv://David:1234@agendasemanal.zbsfqm3.mongodb.net/AgendaSemanal',
+    PORT: process.env.PORT || 3000
+  };
+  

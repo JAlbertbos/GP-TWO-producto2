@@ -1,4 +1,4 @@
-const Week = require('models/week');
+const Week = require('/models/week');
 
 async function getWeeks() {
   try {

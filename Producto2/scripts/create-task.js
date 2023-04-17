@@ -1,6 +1,7 @@
 function allowDrop(event) {
   event.preventDefault();
 }
+
 function drop(event) {
   event.preventDefault();
   var data = event.dataTransfer.getData("text");
@@ -15,6 +16,10 @@ document.querySelectorAll('[data-day]').forEach(button => {
     selectedDay = this.getAttribute('data-day');
   });
 });
+
+const urlParams = new URLSearchParams(window.location.search);
+const weekId = urlParams.get('weekId');
+
 
 const form = document.querySelector('#formtask form');
 const nombreTarea = document.querySelector('#nombreTarea');
@@ -58,7 +63,7 @@ function validarCampos() {
 form.addEventListener('submit', function (event) {
   event.preventDefault();
 
-  
+
   if (!validarCampos()) {
     return;
   }
@@ -75,12 +80,12 @@ form.addEventListener('submit', function (event) {
     // Reiniciar la variable tarjetaAEditar
     tarjetaAEditar = null;
 
-    
+
     const modal = bootstrap.Modal.getInstance(document.querySelector('#formtask'));
     modal.hide();
     form.reset();
   } else {
-    
+
     // Crear la tarjeta con los datos del formulario
     const tarjeta = document.createElement('div');
     const idTarjeta = Date.now().toString(); // Generar un ID único para la tarjeta
@@ -133,7 +138,25 @@ form.addEventListener('submit', function (event) {
         tarjeta.classList.remove('borde-verde');
       }
     });
-    
+    // Guardar la tarea en el almacenamiento local
+    const taskData = {
+      id: idTarjeta,
+      name: nombreTarea.value,
+      description: descripcion.value,
+      startTime: horaInicio.value,
+      endTime: horaFinal.value,
+      participants: participantes.value,
+      location: ubicacion.value,
+      finished: tareaTerminada.checked,
+      day: selectedDay
+    };
+    let weekTasks = JSON.parse(localStorage.getItem("weekTasks")) || {};
+    if (!weekTasks[weekId]) {
+      weekTasks[weekId] = [];
+    }
+    weekTasks[weekId].push(taskData);
+    localStorage.setItem("weekTasks", JSON.stringify(weekTasks));
+
     // Cerrar el modal y resetear el formulario
     const modal = bootstrap.Modal.getInstance(document.querySelector('#formtask'));
     modal.hide();
@@ -169,15 +192,15 @@ form.addEventListener('submit', function (event) {
       participantes.value = participantesTexto;
       ubicacion.value = ubicacionTexto;
       tareaTerminada.checked = tareaTerminada;
-      
+
       // Mostrar el modal
       const modal = new bootstrap.Modal(document.getElementById("formtask"));
       modal.show();
-      
+
     });
     tarjeta.setAttribute('data-id', idTarjeta);
   }
-  
+
   form.reset(); // Reiniciar formulario para edición sin bugs!
 });
 document.getElementById('deleteButton').addEventListener('click', function () {
