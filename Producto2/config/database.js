@@ -1,7 +1,13 @@
-import mongoose from 'mongoose'
-import { mongoDbUrl } from './config.mjs'
+const mongoose = require('mongoose');
+const config = require('./config');
 
-//Conexión con la base de datos
-mongoose.connect(mongoDbUrl)
-    .then(db => console.log('DB is connected'))
-    .catch(err => console.log('DB error', err))
+// Conexión a la base de datos MongoDB
+mongoose.connect(config.databaseURL, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => {
+    console.log('Conexión a MongoDB exitosa');
+  })
+  .catch((err) => {
+    console.error(`Error de conexión a MongoDB: ${err}`);
+  });
+
+module.exports = mongoose.connection;

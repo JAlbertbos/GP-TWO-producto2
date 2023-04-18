@@ -1,37 +1,22 @@
-const Week = require("/Producto2/models/Week");
+const Week = require('../models/Week');
 
-// Controlador para obtener todas las semanas
-exports.getWeeks = (req, res) => {
-  Week.find()
-    .then(weeks => res.json(weeks))
-    .catch(err => res.status(500).json({ error: err }));
+exports.getWeeks = async () => {
+  return await Week.find();
 };
 
-// Controlador para obtener una semana por su ID
-exports.getWeekById = (req, res) => {
-  Week.findById(req.params.weekId)
-    .then(week => res.json(week))
-    .catch(err => res.status(500).json({ error: err }));
+exports.getWeekById = async (id) => {
+  return await Week.findById(id);
 };
 
-// Controlador para crear una nueva semana
-exports.createWeek = (req, res) => {
-  const newWeek = new Week(req.body);
-  newWeek.save()
-    .then(week => res.json(week))
-    .catch(err => res.status(500).json({ error: err }));
+exports.createWeek = async (weekData) => {
+  const week = new Week(weekData);
+  return await week.save();
 };
 
-// Controlador para actualizar una semana por su ID
-exports.updateWeekById = (req, res) => {
-  Week.findByIdAndUpdate(req.params.weekId, req.body, { new: true })
-    .then(week => res.json(week))
-    .catch(err => res.status(500).json({ error: err }));
+exports.updateWeek = async (id, weekData) => {
+  return await Week.findByIdAndUpdate(id, weekData, { new: true });
 };
 
-// Controlador para eliminar una semana por su ID
-exports.deleteWeekById = (req, res) => {
-  Week.findByIdAndDelete(req.params.weekId)
-    .then(() => res.json({ message: 'Week deleted successfully' }))
-    .catch(err => res.status(500).json({ error: err }));
+exports.deleteWeek = async (id) => {
+  return await Week.findByIdAndRemove(id);
 };
