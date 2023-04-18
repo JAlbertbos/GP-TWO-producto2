@@ -1,11 +1,14 @@
 const express = require('express');
-const { graphqlHTTP } = require('express-graphql');
+//const { graphqlHTTP } = require('express-graphql');
 const bodyParser = require('body-parser');
 const config = require('./config/config');
 const database = require('./config/database');
-const schema = require('./graphql/schema');
-const resolvers = require('./graphql/resolvers');
+//const schema = require('./graphql/schema');
+//const resolvers = require('./graphql/resolvers');
 const path = require('path'); 
+const mongoose = require('mongoose');
+const weeksController = require('./controllers/WeeksController');
+const tasksController = require('./controllers/TasksController');
 
 const app = express();
 
@@ -19,13 +22,12 @@ app.get('/', (req, res) => {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Configura el middleware de GraphQL
-app.use('/graphql', graphqlHTTP({
-    schema: schema,
-    rootValue: resolvers,
-    graphiql: true,
-  }));
-  
+// app.use('/graphql', graphqlHTTP({
+//   schema: schema,
+//   rootValue: resolvers,
+//   graphiql: true,
+// }));
+
 
 // Conexión a la base de datos MongoDB
 database.on('error', console.error.bind(console, 'Error de conexión a MongoDB:'));
@@ -86,4 +88,3 @@ app.delete('/tasks/:id', async (req, res) => {
 app.listen(config.PORT, () => {
   console.log(`Servidor escuchando en el puerto ${config.PORT}`);
 });
-

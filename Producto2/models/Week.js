@@ -11,8 +11,7 @@ const WeekSchema = new Schema({
     required: true,
   },
   priority: {
-    type: String,
-    enum: ['Alta', 'Media', 'Baja'],
+    type: Number,
     required: true,
   },
   year: {
