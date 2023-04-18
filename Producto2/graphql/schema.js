@@ -5,10 +5,11 @@ const schema = buildSchema(`
     _id: ID
     name: String
     week: Int
-    priority: Int
+    priority: Priority
     year: Int
     description: String
     color: String
+    tasks: [Task]
   }
 
   type Task {
@@ -20,6 +21,12 @@ const schema = buildSchema(`
     participants: String
     location: String
     completed: Boolean
+  }
+
+  enum Priority {
+    Alta
+    Media
+    Baja
   }
 
   type Query {
@@ -41,7 +48,7 @@ const schema = buildSchema(`
   input WeekInput {
     name: String!
     week: Int!
-    priority: Int!
+    priority: Priority!
     year: Int!
     description: String!
     color: String!
