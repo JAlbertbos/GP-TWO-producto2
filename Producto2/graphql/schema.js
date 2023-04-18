@@ -8,7 +8,7 @@ const schema = buildSchema(`
     priority: Int
     year: Int
     description: String
-    color: String
+    borderColor: String
   }
 
   type Task {
@@ -44,7 +44,7 @@ const schema = buildSchema(`
     priority: Int!
     year: Int!
     description: String!
-    color: String!
+    borderColor: String!
   }
 
   input TaskInput {

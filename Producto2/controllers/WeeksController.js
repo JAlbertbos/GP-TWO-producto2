@@ -10,7 +10,10 @@ exports.getWeekById = async (id) => {
 
 exports.createWeek = async (weekData) => {
   const week = new Week(weekData);
-  return await week.save();
+  console.log('Week to be saved:', week); // Agrega esta línea para registrar la semana antes de guardarla
+  const savedWeek = await week.save();
+  console.log('Saved week:', savedWeek); // Agrega esta línea para registrar la semana guardada
+  return savedWeek;
 };
 
 exports.updateWeek = async (id, weekData) => {
