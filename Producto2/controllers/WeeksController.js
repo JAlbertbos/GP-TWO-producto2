@@ -1,49 +1,34 @@
-const weekData = {
-  name: 'Semana 1',
-  number: 1,
-  priority: 'Alta',
-  year: 2022,
-  colour: 'Rojo',
-  description: 'Descripción de la semana 1',
-};
+const Task = require('../models/Task');
 
-fetch('/weeks', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify(weekData),
-})
-  .then((response) => response.json())
-  .then((data) => console.log(data))
-  .catch((error) => console.error(error));
+class TasksController {
+  async getAll(req, res) {
+    try {
+      const tasks = await Task.find({});
+      res.status(200).json(tasks);
+    } catch (error) {
+      res.status(500).json({ message: 'Error al obtener las tareas' });
+    }
+  }
 
-  const id = 1;
-const updatedWeekData = {
-  name: 'Semana actualizada',
-  number: 1,
-  priority: 'Baja',
-  year: 2022,
-  colour: 'Verde',
-  description: 'Descripción de la semana actualizada',
-};
+  async create(req, res) {
+    try {
+      const newTask = new Task(req.body);
+      await newTask.save();
+      res.status(201).json(newTask);
+    } catch (error) {
+      res.status(500).json({ message: 'Error al crear la tarea' });
+    }
+  }
 
-fetch(`/weeks/${id}`, {
-  method: 'PUT',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify(updatedWeekData),
-})
-  .then((response) => response.json())
-  .then((data) => console.log(data))
-  .catch((error) => console.error(error));
+  async delete(req, res) {
+    try {
+      const { id } = req.params;
+      await Task.findByIdAndDelete(id);
+      res.status(200).json({ message: 'Tarea eliminada correctamente' });
+    } catch (error) {
+      res.status(500).json({ message: 'Error al eliminar la tarea' });
+    }
+  }
+}
 
-//eliminar
-  fetch(`/weeks/${id}`, {
-    method: 'DELETE',
-  })
-    .then((response) => response.json())
-    .then((data) => console.log(data))
-    .catch((error) => console.error(error));
-  
+module.exports = new TasksController();

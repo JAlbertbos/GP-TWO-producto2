@@ -1,13 +1,18 @@
 const mongoose = require('mongoose');
-const config = require('mongodb+srv://David:1234@agendasemanal.zbsfqm3.mongodb.net/AgendaSemanal');
 
-// Conexión a la base de datos MongoDB
-mongoose.connect(config.databaseURL, { useNewUrlParser: true })
-  .then(() => {
-    console.log('Conexión a MongoDB exitosa');
-  })
-  .catch((err) => {
-    console.error(`Error de conexión a MongoDB: ${err}`);
-  });
+const connectDB = async () => {
+  try {
+    await mongoose.connect('<your-connection-string>', {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useFindAndModify: false,
+      useCreateIndex: true,
+    });
+    console.log('MongoDB Connected...');
+  } catch (err) {
+    console.error(err.message);
+    process.exit(1);
+  }
+};
 
-module.exports = mongoose.connection;
+module.exports = connectDB;
