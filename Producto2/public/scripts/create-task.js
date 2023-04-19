@@ -63,6 +63,7 @@ form.addEventListener('submit', function (event) {
     return;
   }
 
+  
   const taskData = {
     title: nombreTarea.value,
     description: descripcion.value,
@@ -70,7 +71,7 @@ form.addEventListener('submit', function (event) {
     endTime: horaFinal.value,
     participants: participantes.value,
     location: ubicacion.value,
-    completed: tareaTerminadaCheckbox.checked
+    completed: tareaTerminadaCheckbox?.checked
   };
 
   createTask(taskData, selectedDay);
