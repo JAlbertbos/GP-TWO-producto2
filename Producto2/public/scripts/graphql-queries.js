@@ -37,5 +37,5 @@ async function createWeek(name, week, priority, year, description, borderColor) 
     }
   }
   
-  export { createWeek };
+ 
   

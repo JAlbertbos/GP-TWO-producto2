@@ -6,8 +6,11 @@ function drop(event) {
   event.preventDefault();
   var data = event.dataTransfer.getData("text");
   var element = document.getElementById(data);
-  event.target.appendChild(element);
+  if (!event.target.contains(element)) {
+    event.target.appendChild(element);
+  }
 }
+
 
 let tarjetaAEditar;
 
