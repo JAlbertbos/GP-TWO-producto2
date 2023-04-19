@@ -1,5 +1,6 @@
 
 const deleteCardBtn = document.querySelector("#eliminarTareaBotn");
+if (deleteCardBtn) {
 deleteCardBtn.addEventListener("click", () => {
   if (selectedCard) {
     selectedCard.remove();
@@ -9,6 +10,8 @@ deleteCardBtn.addEventListener("click", () => {
     eliminarTareaModal.hide();
   }
 });
+}
+
 
 document.addEventListener("click", function (event) {
   if (event.target.matches(".eliminar-tarea")) {
@@ -20,5 +23,3 @@ document.addEventListener("click", function (event) {
     eliminarTareaModal.show();
   }
 });
-
-
