@@ -1,3 +1,6 @@
+import { createTask as createTaskGraphQL } from './graphql-queries';
+
+
 function allowDrop(event) {
   event.preventDefault();
 }
@@ -166,19 +169,50 @@ function addCardToDOM(taskId, taskData, selectedDay) {
   }
 }
 
-function createTask(taskData, selectedDay) {
-  const taskId = Date.now().toString(); 
-  addCardToDOM(taskId, taskData, selectedDay);
+async function createTaskFrontend(taskData, selectedDay) {
+  try {
+    // Llama a la función createTaskGraphQL en lugar de enviar una solicitud POST a /tasks
+    const createdTask = await createTaskGraphQL(
+      taskData.title,
+      taskData.description,
+      taskData.startTime,
+      taskData.endTime,
+      taskData.participants,
+      taskData.location,
+      taskData.completed
+    );
+
+    addCardToDOM(createdTask._id, taskData, selectedDay);
+    const modalInstance = bootstrap.Modal.getInstance(document.getElementById("formtask"));
+    modalInstance.hide();
+  } catch (error) {
+    console.error('Error:', error);
+  }
 }
+
 
 const btnEliminarTareaDefinitivamente = document.getElementById("btnEliminarTareaDefinitivamente");
 
 let selectedCard;
-document.getElementById("btnEliminarTareaDefinitivamente").addEventListener('click', function () {
+document.getElementById("btnEliminarTareaDefinitivamente").addEventListener('click', async function () {
   if (selectedCard) {
-    selectedCard.remove();
+    const taskId = selectedCard.getAttribute('data-id');
+    try {
+      const response = await fetch(`/tasks/${taskId}`, {
+        method: 'DELETE',
+      });
+  
+      if (!response.ok) {
+        throw new Error('Error al eliminar la tarea');
+      }
+  
+      selectedCard.remove();
+    } catch (error) {
+      console.error('Error:', error);
+    }
   }
 });
+
 
 
 document.getElementById('formtask').addEventListener('hidden.bs.modal', function () {
