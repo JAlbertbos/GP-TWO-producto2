@@ -1,6 +1,7 @@
 function allowDrop(event) {
   event.preventDefault();
 }
+
 function drop(event) {
   event.preventDefault();
   var data = event.dataTransfer.getData("text");
@@ -9,6 +10,7 @@ function drop(event) {
 }
 
 let tarjetaAEditar;
+
 let selectedDay;
 document.querySelectorAll('[data-day]').forEach(button => {
   button.addEventListener('click', function () {
@@ -23,10 +25,9 @@ const horaInicio = document.querySelector('#horaInicio');
 const horaFinal = document.querySelector('#horaFinal');
 const participantes = document.querySelector('#participantes');
 const ubicacion = document.querySelector('#ubicacion');
-const tareaTerminada = document.querySelector('#tareaTerminada');
+const tareaTerminadaCheckbox = document.querySelector('#tareaTerminada');
 const iconoPapelera = document.createElement('i');
 iconoPapelera.classList.add('bi', 'bi-trash-fill', 'ms-2', 'eliminar-tarea', 'text-danger');
-
 
 function validarCampos() {
   let mensajeError = '';
@@ -58,136 +59,147 @@ function validarCampos() {
 form.addEventListener('submit', function (event) {
   event.preventDefault();
 
-  
   if (!validarCampos()) {
     return;
   }
-  if (tarjetaAEditar) {
-    // Actualizar la tarjeta existente
-    tarjetaAEditar.querySelector('.card-title').innerText = nombreTarea.value;
-    tarjetaAEditar.querySelector('.card-text').innerText = descripcion.value;
-    tarjetaAEditar.querySelector('.list-group-item:nth-child(1)').innerText = `Hora de inicio: ${horaInicio.value}`;
-    tarjetaAEditar.querySelector('.list-group-item:nth-child(2)').innerText = `Hora de final: ${horaFinal.value}`;
-    tarjetaAEditar.querySelector('.list-group-item:nth-child(3)').innerText = `Participantes: ${participantes.value}`;
-    tarjetaAEditar.querySelector('.list-group-item:nth-child(4)').innerText = `Ubicación: ${ubicacion.value}`;
-    tarjetaAEditar.querySelector('.form-check-input').checked = tareaTerminada.checked;
 
-    // Reiniciar la variable tarjetaAEditar
-    tarjetaAEditar = null;
+  const taskData = {
+    title: nombreTarea.value,
+    description: descripcion.value,
+    startTime: horaInicio.value,
+    endTime: horaFinal.value,
+    participants: participantes.value,
+    location: ubicacion.value,
+    completed: tareaTerminadaCheckbox.checked
+  };
 
-    
-    const modal = bootstrap.Modal.getInstance(document.querySelector('#formtask'));
-    modal.hide();
-    form.reset();
-  } else {
-    
-    // Crear la tarjeta con los datos del formulario
-    const tarjeta = document.createElement('div');
-    const idTarjeta = Date.now().toString(); // Generar un ID único para la tarjeta
-    tarjeta.id = `tarjeta-${idTarjeta}`; // Agregar el ID a la tarjeta
-    tarjeta.classList.add('card', 'my-3', 'draggable');
-    tarjeta.innerHTML = `
+  createTask(taskData, selectedDay);
+});
+
+function addCardToDOM(taskId, taskData, selectedDay) {
+  
+
+  const tarjeta = document.createElement('div');
+  tarjeta.id = `tarjeta-${taskId}`; 
+  tarjeta.classList.add('card', 'my-3', 'draggable');
+  tarjeta.innerHTML = `
     <div class="card-body">
       <div class="d-flex align-items-center justify-content-between">
-        <h5 class="card-title">${nombreTarea.value}</h5>
+        <h5 class="card-title">${taskData.title}</h5>
         <button type="button"  class="btn btn-link p-0 eliminar-tarea">${iconoPapelera.outerHTML}</button>
       </div>
-      <p class="card-text">${descripcion.value}</p>
+      <p class="card-text">${taskData.description}</p>
       <ul class="list-group list-group-flush">
-        <li class="list-group-item"><strong>Hora de inicio:</strong> ${horaInicio.value}</li>
-        <li class="list-group-item"><strong>Hora de final:</strong> ${horaFinal.value}</li>
-        <li class="list-group-item"><strong>Participantes:</strong> ${participantes.value}</li>
-        <li class="list-group-item"><strong>Ubicación:</strong> ${ubicacion.value}</li>
+        <li class="list-group-item"><strong>Hora de inicio:</strong> ${taskData.startTime}</li>
+        <li class="list-group-item"><strong>Hora de final:</strong> ${taskData.endTime}</li>
+        <li class="list-group-item"><strong>Participantes:</strong> ${taskData.participants}</li>
+        <li class="list-group-item"><strong>Ubicación:</strong> ${taskData.location}</li>
       </ul>
       <div class="form-check mt-3">
-        <input class="form-check-input" type="checkbox" id="tarea-${nombreTarea.value}">
-        <label class="form-check-label" for="tarea-${nombreTarea.value}">Tarea terminada</label>
+        <input class="form-check-input" type="checkbox" id="tarea-${taskData.title}" ${taskData.completed ? 'checked' : ''}>
+        <label class="form-check-label" for="tarea-${taskData.title}">Tarea terminada</label>
       </div>
       <div class="mt-auto d-flex justify-content-end">
       <button type="button" class="btn btn-link p-0 editar-tarea"><i class="bi bi-pencil-square text-primary"></i></button>
       </div>
-      </div>
-      
     </div>
   `;
-    tarjeta.setAttribute('draggable', true);
-    tarjeta.addEventListener('dragstart', function (event) {
-      event.dataTransfer.setData('text/plain', this.id);
-    });
-
-    let dropzone;
-    if (selectedDay) {
-      dropzone = document.querySelector(`.contenedor-dia[data-day="${selectedDay}"] .dropzone`);
-    }
-    if (!dropzone) {
-      dropzone = document.querySelector('.zone-bottom');
-    }
-
-    dropzone.appendChild(tarjeta);
-    selectedDay = undefined;
-    const checkbox = tarjeta.querySelector('.form-check-input');
-    checkbox.addEventListener('change', function () {
-      if (this.checked) {
-        tarjeta.classList.add('borde-verde');
-      } else {
-        tarjeta.classList.remove('borde-verde');
-      }
-    });
-    
-    // Cerrar el modal y resetear el formulario
-    const modal = bootstrap.Modal.getInstance(document.querySelector('#formtask'));
-    modal.hide();
-    form.reset();
-    const botonEliminar = tarjeta.querySelector('.eliminar-tarea');
-    botonEliminar.addEventListener('click', function () {
-      selectedCard = tarjeta;
-      const eliminarTareaModalEl = document.getElementById("eliminarTareaModal");
-      const eliminarTareaModal = new bootstrap.Modal(eliminarTareaModalEl);
-      eliminarTareaModal.show();
-    });
-
-    // Lapiz edicion
-    const botonEditar = tarjeta.querySelector('.editar-tarea');
-    botonEditar.addEventListener('click', function () {
-      // Guardar la referencia a la tarjeta que se va a editar
-      tarjetaAEditar = tarjeta;
-
-      // Obtener la información de la tarjeta creada
-      const titulo = tarjeta.querySelector('.card-title').innerText;
-      const desc = tarjeta.querySelector('.card-text').innerText;
-      const horaInicioTexto = tarjeta.querySelector('.list-group-item:nth-child(1)').innerText.replace('Hora de inicio: ', '');
-      const horaFinalTexto = tarjeta.querySelector('.list-group-item:nth-child(2)').innerText.replace('Hora de final: ', '');
-      const participantesTexto = tarjeta.querySelector('.list-group-item:nth-child(3)').innerText.replace('Participantes: ', '');
-      const ubicacionTexto = tarjeta.querySelector('.list-group-item:nth-child(4)').innerText.replace('Ubicación: ', '');
-      const tareaTerminada = tarjeta.querySelector('.form-check-input').checked;
-
-      // Rellenar los campos del modal con la información de la tarjeta
-      nombreTarea.value = titulo;
-      descripcion.value = desc;
-      horaInicio.value = horaInicioTexto;
-      horaFinal.value = horaFinalTexto;
-      participantes.value = participantesTexto;
-      ubicacion.value = ubicacionTexto;
-      tareaTerminada.checked = tareaTerminada;
-      
-      // Mostrar el modal
-      const modal = new bootstrap.Modal(document.getElementById("formtask"));
-      modal.show();
-      
-    });
-    tarjeta.setAttribute('data-id', idTarjeta);
+  tarjeta.setAttribute('draggable', true);
+  tarjeta.addEventListener('dragstart', function (event) {
+    event.dataTransfer.setData('text/plain', this.id);
+  });
+  let dropzone;
+  if (selectedDay) {
+    dropzone = document.querySelector(`.contenedor-dia[data-day="${selectedDay}"] .dropzone`);
   }
-  
-  form.reset(); // Reiniciar formulario para edición sin bugs!
-});
-document.getElementById('deleteButton').addEventListener('click', function () {
-  const tarjetaId = selectedCard.getAttribute('data-id');
-  const tarjeta = document.getElementById(`tarjeta-${tarjetaId}`);
-  if (tarjeta) {
-    tarjeta.remove();
+  if (!dropzone) {
+    dropzone = document.querySelector('.zone-bottom');
   }
-  const eliminarTareaModalEl = document.getElementById("eliminarTareaModal");
-  const eliminarTareaModal = bootstrap.Modal.getInstance(eliminarTareaModalEl);
-  eliminarTareaModal.hide();
-  selectedCard = null;
+
+  dropzone.appendChild(tarjeta);
+  selectedDay = undefined;
+
+  const checkbox = tarjeta.querySelector('.form-check-input');
+  checkbox.addEventListener('change', function () {
+    if (this.checked) {
+      tarjeta.classList.add('borde-verde');
+    } else {
+      tarjeta.classList.remove('borde-verde');
+    }
+  });
+
+  const botonEliminar = tarjeta.querySelector('.eliminar-tarea');
+  botonEliminar.addEventListener('click', function () {
+    selectedCard = tarjeta;
+    const eliminarTareaModalEl = document.getElementById("eliminarTareaModal");
+    const eliminarTareaModal = new bootstrap.Modal(eliminarTareaModalEl);
+    eliminarTareaModal.show();
+  });
+
+  const botonEditar = tarjeta.querySelector('.editar-tarea');
+  botonEditar.addEventListener('click', function () {
+    tarjetaAEditar = tarjeta; const titulo = tarjeta.querySelector('.card-title').innerText;
+    const desc = tarjeta.querySelector('.card-text').innerText;
+    const horaInicioTexto = tarjeta.querySelector('.list-group-item:nth-child(1)').innerText.replace('Hora de inicio: ', '');
+    const horaFinalTexto = tarjeta.querySelector('.list-group-item:nth-child(2)').innerText.replace('Hora de final: ', '');
+    const participantesTexto = tarjeta.querySelector('.list-group-item:nth-child(3)').innerText.replace('Participantes: ', '');
+    const ubicacionTexto = tarjeta.querySelector('.list-group-item:nth-child(4)').innerText.replace('Ubicación: ', '');
+    const tareaTerminada = tarjeta.querySelector('.form-check-input').checked;
+
+    nombreTarea.value = titulo;
+    descripcion.value = desc;
+    horaInicio.value = horaInicioTexto;
+    horaFinal.value = horaFinalTexto;
+    participantes.value = participantesTexto;
+    ubicacion.value = ubicacionTexto;
+    tareaTerminadaCheckbox.checked = tareaTerminada;
+
+    const modal = new bootstrap.Modal(document.getElementById("formtask"));
+    modal.show();
+  });
+  tarjeta.setAttribute('data-id',
+    taskId); 
+
+  if (taskData.completed) {
+    tarjeta.classList.add('borde-verde');
+  }
+}
+
+function createTask(taskData, selectedDay) {
+  const taskId = Date.now().toString(); 
+  addCardToDOM(taskId, taskData, selectedDay);
+}
+
+const btnEliminarTareaDefinitivamente = document.getElementById("btnEliminarTareaDefinitivamente");
+
+let selectedCard;
+document.getElementById("btnEliminarTareaDefinitivamente").addEventListener('click', function () {
+  if (selectedCard) {
+    selectedCard.remove();
+  }
 });
+
+
+document.getElementById('formtask').addEventListener('hidden.bs.modal', function () {
+  if (tarjetaAEditar) {
+    const taskId = tarjetaAEditar.getAttribute('data-id');
+    tarjetaAEditar.remove();
+    createTask({
+      title: nombreTarea.value,
+      description: descripcion.value,
+      startTime: horaInicio.value,
+      endTime: horaFinal.value,
+      participants: participantes.value,
+      location: ubicacion.value,
+      completed: tareaTerminada.checked
+    }, selectedDay);
+    tarjetaAEditar = undefined;
+  }
+});
+
+// Restablecer el formulario después de cerrar el modal
+document.getElementById('formtask').addEventListener('hidden.bs.modal', function () {
+  form.reset();
+});
+
+

@@ -70,10 +70,31 @@ app.get('/tasks/:id', async (req, res) => {
   res.json(task);
 });
 
-app.post('/tasks', async (req, res) => {
-  const task = await tasksController.createTask(req.body);
-  res.json(task);
+app.post("/tasks", async (req, res) => {
+  try {
+    const taskData = req.body;
+    const weekId = taskData.weekId;
+    delete taskData.weekId;
+
+    const week = await Week.findById(weekId);
+
+    if (!week) {
+      return res.status(404).json({ error: "Week not found" });
+    }
+
+    const task = new Task(taskData);
+    await task.save();
+
+    week.tasks.push(task);
+    await week.save();
+
+    res.json(task);
+  } catch (error) {
+    console.error("Error creating task:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
+
 
 app.put('/tasks/:id', async (req, res) => {
   const task = await tasksController.updateTask(req.params.id, req.body);
