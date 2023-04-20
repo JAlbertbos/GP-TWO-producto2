@@ -31,7 +31,7 @@ const horaInicio = document.querySelector('#horaInicio');
 const horaFinal = document.querySelector('#horaFinal');
 const participantes = document.querySelector('#participantes');
 const ubicacion = document.querySelector('#ubicacion');
-const tareaTerminadaCheckbox = document.querySelector('#tareaTerminada');
+const tareaTerminadaCheckbox = document.querySelector('#tareaTerminadaCheckbox');
 const iconoPapelera = document.createElement('i');
 iconoPapelera.classList.add('bi', 'bi-trash-fill', 'ms-2', 'eliminar-tarea', 'text-danger');
 
@@ -229,7 +229,7 @@ document.getElementById('formtask').addEventListener('hidden.bs.modal', function
       endTime: horaFinal.value,
       participants: participantes.value,
       location: ubicacion.value,
-      completed: tareaTerminada.checked
+      completed: tareaTerminadaCheckbox.checked
     }, selectedDay);
     tarjetaAEditar = undefined;
   }
