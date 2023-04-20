@@ -135,6 +135,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   async function createCard(name, week, priority, year, description, color) {
     const id = await saveWeekToServer(name, week, priority, year, description, color);
     if (id) {
+      currentWeekId = id;
       addCardToDOM(id, name, week, priority, year, description, color);
     }
   }
