@@ -138,7 +138,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
       <div class="modal-body">
-        <form>
+        <form id="form-tarea">
           <div class="mb-3">
             <input type="text" class="form-control " id="nombreTarea" placeholder="Nombre de tarea" >
           </div>
@@ -156,9 +156,6 @@
           </div>
           <div class="mb-3">
             <input type="text" class="form-control" id="ubicacion" placeholder="Ubicación">
-            <div class="mb-3 form-check">
-              <input class="form-check-input" type="checkbox" id="tareaTerminadaCheckbox">
-          </div>
           <div class="modal-footer">
             <button type="submit" id="saveButton" class="btn btn-success"><i class="bi bi-check"></i></button>
           </div>
@@ -207,7 +204,7 @@ aria-hidden="true">
 </div>
 
   <script src="./bootstrap/bootstrap.bundle.min.js"></script>
-  <script src="./scripts/create-task.js" type="module"></script>
+  <script src="./scripts/create-task.js" type="module" ></script>
 <script src="./scripts/delete-task.js" type="module"></script>
 
   

@@ -1,3 +1,4 @@
+import { createTask } from './graphql-queries.js';
 
 function allowDrop(event) {
   event.preventDefault();
@@ -24,9 +25,26 @@ const horaInicio = document.querySelector('#horaInicio');
 const horaFinal = document.querySelector('#horaFinal');
 const participantes = document.querySelector('#participantes');
 const ubicacion = document.querySelector('#ubicacion');
-const tareaTerminada = document.querySelector('#tareaTerminada');
 const iconoPapelera = document.createElement('i');
 iconoPapelera.classList.add('bi', 'bi-trash-fill', 'ms-2', 'eliminar-tarea', 'text-danger');
+
+
+async function saveTaskToDatabase(task) {
+  try {
+    const newTask = await createTask(
+      task.name,
+      task.description,
+      task.startTime,
+      task.endTime,
+      task.participants,
+      task.location,
+      task.completed
+    );
+    console.log('Tarea guardada en la base de datos:', newTask);
+  } catch (error) {
+    console.error('Error al guardar la tarea en la base de datos:', error);
+  }
+}
 
 
 function validarCampos() {
@@ -59,10 +77,24 @@ function validarCampos() {
 form.addEventListener('submit', function (event) {
   event.preventDefault();
 
-  
+  const task = {
+    name: nombreTarea.value,
+    description: descripcion.value,
+    startTime: horaInicio.value,
+    endTime: horaFinal.value,
+    participants: participantes.value,
+    location: ubicacion.value,
+    completed: false
+  };
+
   if (!validarCampos()) {
     return;
   }
+  
+  listaTareas.prepend(tarjeta);
+
+  saveTaskToDatabase(task);
+
   if (tarjetaAEditar) {
     // Actualizar la tarjeta existente
     tarjetaAEditar.querySelector('.card-title').innerText = nombreTarea.value;
@@ -181,7 +213,7 @@ form.addEventListener('submit', function (event) {
   
   form.reset(); // Reiniciar formulario para edición sin bugs!
 });
-document.getElementById('deleteButton').addEventListener('click', function () {
+document.getElementById('btnEliminarTareaDefinitivamente').addEventListener('click', function () {
   const tarjetaId = selectedCard.getAttribute('data-id');
   const tarjeta = document.getElementById(`tarjeta-${tarjetaId}`);
   if (tarjeta) {
