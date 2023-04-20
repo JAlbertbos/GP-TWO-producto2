@@ -197,4 +197,30 @@ async function createWeek(name, week, priority, year, description, borderColor) 
   
   export { updateTaskDay };
   
+  async function deleteWeek(weekId) {
+    const mutation = `
+    mutation {
+      deleteWeek(id: "${weekId}") {
+        _id
+      }
+    }`;
+  
+    const response = await fetch('/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({ query: mutation }),
+    });
+  
+    const data = await response.json();
+  
+    if (response.ok) {
+      return data.data.deleteWeek;
+    } else {
+      throw new Error(data.errors[0].message);
+    }
+  }
+  export { deleteWeek };
   
