@@ -1,3 +1,7 @@
+let tarjetaAEditar;
+let tarjetaSeleccionada;
+let selectedDay;
+
 function allowDrop(event) {
   event.preventDefault();
 }
@@ -11,10 +15,6 @@ function drop(event) {
   }
 }
 
-
-let tarjetaAEditar;
-
-let selectedDay;
 document.querySelectorAll('[data-day]').forEach(button => {
   button.addEventListener('click', function () {
     selectedDay = this.getAttribute('data-day');
@@ -40,14 +40,10 @@ function validarCampos() {
   } else if (descripcion.value.trim() === '') {
     mensajeError = 'La descripción no puede estar vacía.';
   } else if (horaInicio.value === '') {
-    mensajeError = 'La hora de inicio no puede estar vacía.';
-  } else if (horaFinal.value === '') {
     mensajeError = 'La hora de final no puede estar vacía.';
   } else if (participantes.value.trim() === '') {
     mensajeError = 'Los participantes no pueden estar vacíos.';
-  } else if (ubicacion.value.trim() === '') {
-    mensajeError = 'La ubicación no puede estar vacía.';
-  }
+  } 
 
   if (mensajeError) {
     document.getElementById('genericModalMessage').innerText = mensajeError;
@@ -66,7 +62,6 @@ form.addEventListener('submit', function (event) {
     return;
   }
 
-  
   const taskData = {
     title: nombreTarea.value,
     description: descripcion.value,
@@ -77,20 +72,36 @@ form.addEventListener('submit', function (event) {
     completed: tareaTerminadaCheckbox?.checked
   };
 
-  createTask(taskData, selectedDay);
+  if (tarjetaAEditar) {
+    // Actualizar tarjeta existente
+    const taskId = tarjetaAEditar.getAttribute('data-id');
+    tarjetaAEditar.remove();
+    addCardToDOM(taskId, taskData, selectedDay);
+    tarjetaAEditar = undefined;
+  } else {
+    // Crear una nueva tarjeta
+    createTask(taskData, selectedDay);
+  }
+
+  // Resetear el formulario
+  form.reset();
+
+  // Cerrar el modal
+  const modal = bootstrap.Modal.getInstance(document.getElementById("formtask"));
+  modal.hide();
 });
 
-function addCardToDOM(taskId, taskData, selectedDay) {
-  
 
+
+function addCardToDOM(taskId, taskData, selectedDay) {
   const tarjeta = document.createElement('div');
-  tarjeta.id = `tarjeta-${taskId}`; 
+  tarjeta.id = `tarjeta-${taskId}`;
   tarjeta.classList.add('card', 'my-3', 'draggable');
   tarjeta.innerHTML = `
     <div class="card-body">
       <div class="d-flex align-items-center justify-content-between">
         <h5 class="card-title">${taskData.title}</h5>
-        <button type="button"  class="btn btn-link p-0 eliminar-tarea">${iconoPapelera.outerHTML}</button>
+        <button type="button" id="eliminar-${taskId}" class="btn btn-link p-0 eliminar-tarea">${iconoPapelera.outerHTML}</button>
       </div>
       <p class="card-text">${taskData.description}</p>
       <ul class="list-group list-group-flush">
@@ -132,9 +143,10 @@ function addCardToDOM(taskId, taskData, selectedDay) {
     }
   });
 
+
   const botonEliminar = tarjeta.querySelector('.eliminar-tarea');
   botonEliminar.addEventListener('click', function () {
-    selectedCard = tarjeta;
+    tarjetaSeleccionada = tarjeta.id;
     const eliminarTareaModalEl = document.getElementById("eliminarTareaModal");
     const eliminarTareaModal = new bootstrap.Modal(eliminarTareaModalEl);
     eliminarTareaModal.show();
@@ -142,7 +154,9 @@ function addCardToDOM(taskId, taskData, selectedDay) {
 
   const botonEditar = tarjeta.querySelector('.editar-tarea');
   botonEditar.addEventListener('click', function () {
-    tarjetaAEditar = tarjeta; const titulo = tarjeta.querySelector('.card-title').innerText;
+   
+    tarjetaAEditar = tarjeta;
+    const titulo = tarjeta.querySelector('.card-title').innerText;
     const desc = tarjeta.querySelector('.card-text').innerText;
     const horaInicioTexto = tarjeta.querySelector('.list-group-item:nth-child(1)').innerText.replace('Hora de inicio: ', '');
     const horaFinalTexto = tarjeta.querySelector('.list-group-item:nth-child(2)').innerText.replace('Hora de final: ', '');
@@ -161,49 +175,34 @@ function addCardToDOM(taskId, taskData, selectedDay) {
     const modal = new bootstrap.Modal(document.getElementById("formtask"));
     modal.show();
   });
-  tarjeta.setAttribute('data-id',
-    taskId); 
-
-  if (taskData.completed) {
-    tarjeta.classList.add('borde-verde');
-  }
+  
 }
 
 function createTask(taskData, selectedDay) {
-  const taskId = Date.now().toString(); 
+  const taskId = Date.now().toString();
   addCardToDOM(taskId, taskData, selectedDay);
 }
 
-const btnEliminarTareaDefinitivamente = document.getElementById("btnEliminarTareaDefinitivamente");
-
-let selectedCard;
+// Eliminar tarea definitivamente
 document.getElementById("btnEliminarTareaDefinitivamente").addEventListener('click', function () {
-  if (selectedCard) {
-    selectedCard.remove();
+  if (tarjetaSeleccionada) {
+    const tarjeta = document.getElementById(tarjetaSeleccionada);
+    tarjeta.remove();
+    tarjetaSeleccionada = null;
+    const eliminarTareaModalEl = document.getElementById("eliminarTareaModal");
+    const eliminarTareaModal = bootstrap.Modal.getInstance(eliminarTareaModalEl);
+    eliminarTareaModal.hide();
   }
 });
 
-
-document.getElementById('formtask').addEventListener('hidden.bs.modal', function () {
-  if (tarjetaAEditar) {
-    const taskId = tarjetaAEditar.getAttribute('data-id');
-    tarjetaAEditar.remove();
-    createTask({
-      title: nombreTarea.value,
-      description: descripcion.value,
-      startTime: horaInicio.value,
-      endTime: horaFinal.value,
-      participants: participantes.value,
-      location: ubicacion.value,
-      completed: tareaTerminadaCheckbox.checked
-    }, selectedDay);
-    tarjetaAEditar = undefined;
+// Evento click para eliminar tarea
+document.addEventListener("click", function (event) {
+  if (event.target.matches(".eliminar-tarea")) {
+    const card = event.target.closest(".card");
+    selectedCard = card;
+    // Mostrar el modal de confirmación de eliminación
+    const eliminarTareaModalEl = document.getElementById("eliminarTareaModal");
+    const eliminarTareaModal = new bootstrap.Modal(eliminarTareaModalEl);
+    eliminarTareaModal.show();
   }
 });
-
-// Restablecer el formulario después de cerrar el modal
-document.getElementById('formtask').addEventListener('hidden.bs.modal', function () {
-  form.reset();
-});
-
-

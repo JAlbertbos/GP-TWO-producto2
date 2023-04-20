@@ -32,4 +32,15 @@ const TaskSchema = new Schema({
   },
 });
 
-module.exports = mongoose.model('Task', TaskSchema);
+const WeekSchema = new Schema({
+  weekNumber: {
+    type: Number,
+    required: true,
+  },
+  tasks: [TaskSchema],
+});
+
+module.exports = {
+  Task: mongoose.model('Task', TaskSchema),
+  Week: mongoose.model('Week', WeekSchema),
+};
