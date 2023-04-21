@@ -1,49 +1,63 @@
-document.addEventListener("DOMContentLoaded", () => {
-  let selectedCard = null;
+document.addEventListener("DOMContentLoaded", async () => {
+  async function deleteWeekFromServer(id) {
+    try {
+      const response = await fetch(`/weeks/${id}`, { method: 'DELETE' });
 
-  // Escuchar eventos de click en los iconos de eliminar
-  const deleteIcons = document.querySelectorAll(".bi-trash");
-  deleteIcons.forEach((icon) => {
-    icon.addEventListener("click", (event) => {
-      const card = event.target.closest(".card");
-      selectedCard = card;
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log('Week eliminada:', result);
+
+    } catch (error) {
+      console.error("Error al eliminar la semana:", error);
+    }
+  }
+
+  async function deleteCard(id) {
+    const cardContainers = document.querySelectorAll(".col-md-4.mb-4");
+
+    cardContainers.forEach((cardContainer) => {
+      const card = cardContainer.querySelector(".card");
+
+      if (card.getAttribute("data-id") === id) {
+        cardContainer.remove();
+      }
     });
-  });
+  }
 
-  // Escuchar evento de click en el botón de eliminar tarjeta
-  const deleteCardBtn = document.querySelector("#eliminarTarjetaBtn");
-  deleteCardBtn.addEventListener("click", async () => {
-    if (selectedCard) {
-      const card = event.target.closest(".card");
-      const cardContainer = selectedCard.closest('.col-md-4.mb-4');
-      const weekId = cardContainer.dataset.id;
-      await deleteWeekFromServer(weekId);
-      selectedCard = null;
+  const mainRow = document.querySelector("main .row");
+
+  mainRow.addEventListener("click", (e) => {
+    if (e.target.classList.contains("delete-icon")) {
+      e.preventDefault();
+      const card = e.target.closest(".card");
+      const weekId = card.getAttribute("data-id");
+
       const eliminarTarjetaModalEl = document.getElementById("eliminarTarjetaModal");
-      const eliminarTarjetaModal = bootstrap.Modal.getInstance(eliminarTarjetaModalEl);
-      eliminarTarjetaModal.hide();
+      const eliminarTarjetaModal = new bootstrap.Modal(eliminarTarjetaModalEl, { keyboard: false });
+
+      const eliminarTarjetaBtn = eliminarTarjetaModalEl.querySelector("#eliminarTarjetaBtn");
+
+      // Elimina el evento click existente para evitar múltiples clics
+      eliminarTarjetaBtn.removeEventListener('click', handleClick);
+
+      // Agrega un nuevo evento click
+      eliminarTarjetaBtn.addEventListener("click", handleClick);
+
+      async function handleClick() {
+        await deleteWeekFromServer(weekId);
+        deleteCard(weekId);
+
+        const backdrop = document.querySelector('.modal-backdrop');
+        if (backdrop) {
+          backdrop.remove();
+        }
+        eliminarTarjetaModal.hide();
+      }
+
+      eliminarTarjetaModal.show();
     }
   });
 });
-async function deleteCard(e) {
-  const cardContainer = e.target.closest(".col-md-4.mb-4");
-  const weekId = cardContainer.dataset.id;
-  await deleteWeek(weekId);
-  cardContainer.remove();
-}
-
-async function deleteWeekFromServer(weekId) {
-  try {
-    const deletedWeek = await apiFetch(`/weeks/${id}`, 'DELETE');
-    console.log('Respuesta del servidor al eliminar la semana:', deletedWeek);
-    if (deletedWeek !== null && deletedWeek.hasOwnProperty('_id')) {
-      console.log('Eliminando semana del DOM:', deletedWeek);
-      const cardContainer = document.querySelector(`.col-md-4.mb-4[data-id="${id}"]`);
-      deleteCard(cardContainer);
-    } else {
-      console.error("Error: La respuesta del servidor es nula o no tiene la propiedad _id");
-    }
-  } catch (error) {
-    console.error('Error al eliminar la semana:', error);
-  }
-}
