@@ -1,4 +1,3 @@
-
 //Funciones API y otras movidas :
 
 function priorityToString(priority) {
@@ -14,42 +13,115 @@ function priorityToString(priority) {
   }
 }
 
-async function apiFetch(route, method, data = null) {
-  const options = {
-    method,
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-    },
-  };
+function renderWeeks(weeks) {
+  removeExistingCards();
+  weeks.forEach((week) => {
+    addCardToDOM(
+      week._id,
+      week.name,
+      week.numberWeek,
+      week.priority,
+      week.year,
+      week.description,
+      week.borderColor
+    );
+  });
+}
 
-  if (data) {
-    options.body = JSON.stringify(data);
+async function loadWeeks() {
+  try {
+    const query = `{
+      getAllWeeks {
+        _id
+        name
+        numberWeek
+        priority
+        year
+        description
+        borderColor
+        tasks {
+          _id
+          name
+          description
+          startTime
+          endTime
+          participants
+          location
+          completed
+        }
+      }
+    }`;
+
+    const data = await graphqlFetch(query);
+    renderWeeks(data.getAllWeeks);
+  } catch (error) {
+    console.error('Error al cargar las semanas:', error);
   }
+}
 
-  const response = await fetch(route, options);
 
-  if (!response.ok) {
-    throw new Error(`Error ${response.status}: ${response.statusText}`);
+async function graphqlFetch(query, variables = {}) {
+  try {
+    const response = await fetch('/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({
+        query: query,
+        variables: variables,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error ${response.status}: ${response.statusText}`);
+    }
+
+    const jsonResponse = await response.json();
+    if (jsonResponse.errors) {
+      throw new Error(jsonResponse.errors[0].message);
+    }
+
+    return jsonResponse.data;
+  } catch (error) {
+    console.error('Error in graphqlFetch:', error);
+    throw error;
   }
-
-  return await response.json();
 }
 
 async function saveWeekToServer(name, week, priority, year, description, borderColor) {
   try {
-    const data = {
-      name,
-      week: parseInt(week),
-      priority,
-      year: parseInt(year),
-      description,
-      borderColor,
+    const query = `
+      mutation CreateWeek($week: WeekInput!) {
+        createWeek(week: $week) {
+          _id
+          name
+          numberWeek
+          priority
+          year
+          description
+          borderColor
+        }
+      }
+    `;
+
+    const variables = {
+      week: {
+        name,
+        numberWeek: parseInt(week),
+        priority,
+        year: parseInt(year),
+        description,
+        borderColor,
+      },
     };
 
-    const createdWeek = await apiFetch('/weeks', 'POST', data);
+    console.log("GraphQL query:", query);
+    console.log("GraphQL variables:", variables);
+    const response = await graphqlFetch(query, variables); // Reemplazar 'apiFetch' con 'graphqlFetch'
+    const createdWeek = response.createWeek;
 
-    
     console.log('Respuesta del servidor al crear la semana:', createdWeek);
 
     if (createdWeek !== null && createdWeek.hasOwnProperty('_id')) {
@@ -63,6 +135,7 @@ async function saveWeekToServer(name, week, priority, year, description, borderC
   }
 }
 
+
 //DOMsito 
 
 function removeExistingCards() {
@@ -72,6 +145,7 @@ function removeExistingCards() {
     cardContainer.remove();
   });
 }
+
 
 
 async function addCardToDOM(id, name, week, priority, year, description, color) {
@@ -216,27 +290,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       deleteCard(cardContainer);
     });
   });
-
-  async function loadWeeks() {
-    try {
-    
-      removeExistingCards();
-      
-      const weeks = await apiFetch('/weeks', 'GET');
-  
-      for (const week of weeks) {
-        const { _id, name, week: weekNumber, priority, year, description, borderColor } = week;
-        addCardToDOM(_id, name, weekNumber, priority, year, description, borderColor);
-      }
-    } catch (error) {
-      console.error('Error al cargar las semanas:', error);
-    }
-  }
-  
-  
-
-
-
 
   loadWeeks();
 });

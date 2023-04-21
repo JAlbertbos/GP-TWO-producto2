@@ -1,12 +1,11 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+const mongoose = require("mongoose");
 
-const WeekSchema = new Schema({
+const WeekSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
   },
-  week: {
+  numberWeek: {
     type: Number,
     required: true,
   },
@@ -26,10 +25,12 @@ const WeekSchema = new Schema({
     type: String,
     required: true,
   },
-  tasks: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Task',
-  }],
+  tasks: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Task",
+    },
+  ],
 });
 
-module.exports = mongoose.model('Week', WeekSchema);
+module.exports = mongoose.model("Week", WeekSchema);
