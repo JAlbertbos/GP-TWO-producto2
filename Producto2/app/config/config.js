@@ -3,28 +3,29 @@ const weeksController = require('../controllers/WeeksController');
 
 
 const typeDefs = `#graphql
-  type Week {
-    _id: String
-    name: String
-    numberWeek: Int
-    priority: Int
-    year : Int
-    description: String
-    borderColor: String
-    tasks: [Task]
-  }
+scalar ID
+type Week {
+  _id: ID
+  name: String
+  numberWeek: Int
+  priority: Int
+  year : Int
+  description: String
+  borderColor: String
+  tasks: [Task]
+}
 
-  type Task {
-    _id: String
-    name: String 
-    description: String
-    startTime: String
-    endTime: String
-    participants: String
-    location:String
-    completed: Boolean
-    week: Week
-  }
+type Task {
+  _id: ID
+  name: String 
+  description: String
+  startTime: String
+  endTime: String
+  participants: String
+  location:String
+  completed: Boolean
+  week: Week
+}
   input WeekInput {
     name: String
     numberWeek: Int

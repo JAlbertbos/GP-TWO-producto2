@@ -1,19 +1,32 @@
+import { graphqlFetch } from './create-week.js';
+
 document.addEventListener("DOMContentLoaded", async () => {
   async function deleteWeekFromServer(id) {
     try {
-      const response = await fetch(`/weeks/${id}`, { method: 'DELETE' });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const result = await response.json();
-      console.log('Week eliminada:', result);
-
+      const query = `
+        mutation DeleteWeek($id: ID!) {
+          deleteWeek(id: $id) {
+            _id
+          }
+        }
+      `;
+  
+      const variables = {
+        id,
+      };
+  
+      console.log('Variables enviadas:', variables);
+  
+      const response = await graphqlFetch(query, variables);
+      const deletedWeek = response.deleteWeek;
+  
+      console.log('Semana eliminada:', deletedWeek);
+  
     } catch (error) {
       console.error("Error al eliminar la semana:", error);
     }
   }
+  
 
   async function deleteCard(id) {
     const cardContainers = document.querySelectorAll(".col-md-4.mb-4");

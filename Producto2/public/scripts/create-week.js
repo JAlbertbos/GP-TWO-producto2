@@ -60,7 +60,7 @@ async function loadWeeks() {
 }
 
 
-async function graphqlFetch(query, variables = {}) {
+export async function graphqlFetch(query, variables = {}) {
   try {
     const response = await fetch('/graphql', {
       method: 'POST',
@@ -74,11 +74,20 @@ async function graphqlFetch(query, variables = {}) {
       }),
     });
 
+    const jsonResponse = await response.json();
+
+    // Agregar registro de la respuesta completa
+    console.log("Respuesta completa de GraphQL:", jsonResponse);
+
+    // Agrega esta línea para ver si hay errores en la respuesta
+    if (jsonResponse.errors) {
+      console.error("Errores en la respuesta de GraphQL:", jsonResponse.errors);
+    }
+
     if (!response.ok) {
       throw new Error(`Error ${response.status}: ${response.statusText}`);
     }
 
-    const jsonResponse = await response.json();
     if (jsonResponse.errors) {
       throw new Error(jsonResponse.errors[0].message);
     }
@@ -89,7 +98,6 @@ async function graphqlFetch(query, variables = {}) {
     throw error;
   }
 }
-
 async function saveWeekToServer(name, week, priority, year, description, borderColor) {
   try {
     const query = `
