@@ -85,3 +85,44 @@ async function createWeek(name, week, priority, year, description, borderColor) 
   }
   
   export { createTask };
+
+
+
+
+
+async function deleteWeek(id) {
+  const mutation = `
+    mutation {
+      deleteWeek(input: { _id: "${id}" }) {
+        _id
+      }
+    }
+  `;
+  const response = await fetch('/graphql', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+    body: JSON.stringify({ query: mutation }),
+  });
+  const data = await response.json();
+  if (response.ok) {
+    return data.data.deleteWeek;
+  } else {
+    throw new Error(data.errors[0].message);
+  }
+}
+
+async function deleteCard(cardContainer) {
+  const weekId = cardContainer.dataset.id;
+  await deleteWeek(weekId);
+  cardContainer.remove();
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+
+  Array.from(document.querySelectorAll(".col-md-4.mb-4")).forEach((cardContainer) => {
+    deleteCard(cardContainer);
+    });
+  });

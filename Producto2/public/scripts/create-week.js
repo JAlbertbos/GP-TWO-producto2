@@ -1,11 +1,4 @@
 
-function removeExistingCards() {
-  const mainRow = document.querySelector("main .row");
-  const cardContainers = mainRow.querySelectorAll(".col-md-4.mb-4");
-  cardContainers.forEach((cardContainer) => {
-    cardContainer.remove();
-  });
-}
 
 document.addEventListener("DOMContentLoaded", async () => {
   const confirmBtn = document.getElementById("confirmButton");
@@ -105,7 +98,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   async function addCardToDOM(id, name, week, priority, year, description, color) {
     const cardContainer = document.createElement("div");
     cardContainer.classList.add("col-md-4", "mb-4");
-  
+    
+
     const priorityText = priorityToString(priority);
   
     const card = `
@@ -130,6 +124,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   
     const mainRow = document.querySelector("main .row");
     mainRow.appendChild(cardContainer);
+    
   }
 
   async function createCard(name, week, priority, year, description, color) {
@@ -217,14 +212,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 
-  document.querySelectorAll(".delete-icon").forEach((deleteIcon) => {
-    deleteIcon.addEventListener("click", (e) => {
-      e.preventDefault();
-      const cardContainer = e.target.closest(".col-md-4.mb-4");
-      deleteCard(cardContainer);
-    });
-  });
-
   async function loadWeeks() {
     try {
     
@@ -240,11 +227,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       console.error('Error al cargar las semanas:', error);
     }
   }
-  
-  
-
-
-
 
   loadWeeks();
 });
+
+
