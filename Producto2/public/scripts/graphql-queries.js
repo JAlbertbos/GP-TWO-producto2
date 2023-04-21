@@ -38,6 +38,36 @@ async function createWeek(name, week, priority, year, description, borderColor) 
   }
   
   export { createWeek };
+
+  async function deleteWeek(id) {
+    const mutation = `
+      mutation {
+        deleteWeek(id: "${id}") {
+          _id
+        }
+      }
+    `;
+  
+    const response = await fetch('/graphql', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({ query: mutation }),
+    });
+  
+    const data = await response.json();
+  
+    if (response.ok) {
+      return data.data.deleteWeek;
+    } else {
+      throw new Error(data.errors[0].message);
+    }
+  }
+  
+  export { deleteWeek };
+
   
   async function createTask(name, description, startTime, endTime, participants, location, completed = false) {
     if (!name || name.trim() === '') {

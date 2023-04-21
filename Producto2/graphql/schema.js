@@ -2,7 +2,7 @@ const { buildSchema } = require('graphql');
 
 const schema = buildSchema(`
   type Week {
-    _id: ID
+    _id: ID!
     name: String
     week: Int
     priority: Int
@@ -12,7 +12,7 @@ const schema = buildSchema(`
   }
 
   type Task {
-    _id: ID
+    _id: ID!
     name: String
     description: String
     startTime: String
