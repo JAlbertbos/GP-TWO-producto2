@@ -26,16 +26,16 @@ const schema = buildSchema(`
   }
 
   type Query {
-    getWeeks: [Week]
-    getWeekById(id: ID!): Week
+    getWeeks: [Week!]!
+    getWeekById(id: ID!): ID
     getTasks: [Task]
     getTaskById(id: ID!): Task
   }
 
   type Mutation {
-    createWeek(input: WeekInput): Week
+    createWeek(input: WeekInput): id
     updateWeek(id: ID!, input: WeekInput): Week
-    deleteWeek(id: ID!): Week
+    deleteWeek(id: ID!): ID
     createTask(input: TaskInput): Task
     updateTask(id: ID!, input: TaskInput): Task
     deleteTask(id: ID!): Task
