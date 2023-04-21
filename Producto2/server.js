@@ -23,9 +23,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/graphql', graphqlHTTP({
   schema: schema,
-   rootValue: resolvers,
-   graphiql: true,
- }));
+  rootValue: resolvers,
+  graphiql: true,
+}));
 
 
 // Conexión a la base de datos MongoDB
