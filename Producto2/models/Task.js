@@ -30,6 +30,11 @@ const TaskSchema = new Schema({
     type: Boolean,
     default: false,
   },
+  week: {
+    type: Schema.Types.ObjectId,
+    ref: 'Week',
+    required: true,
+  },
 });
 
 module.exports = mongoose.model('Task', TaskSchema);

@@ -20,6 +20,9 @@ const schema = buildSchema(`
     participants: String
     location: String
     completed: Boolean
+    day: String
+    week: Week
+    
   }
 
   type Query {
@@ -55,6 +58,8 @@ const schema = buildSchema(`
     participants: String!
     location: String!
     completed: Boolean!
+    day: String!
+    weekId: ID!
   }
 `);
 
