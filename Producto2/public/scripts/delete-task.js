@@ -7,7 +7,7 @@ deleteCardBtn.addEventListener("click", () => {
     const eliminarTareaModalEl = document.getElementById("eliminarTareaModal");
     const eliminarTareaModal = bootstrap.Modal.getInstance(eliminarTareaModalEl);
     eliminarTareaModal.hide();
-  }  
+  }
 });
 
 document.addEventListener("click", function (event) {
