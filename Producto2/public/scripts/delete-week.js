@@ -4,12 +4,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   async function deleteWeekFromServer(id) {
     try {
       const query = `
-        mutation DeleteWeek($id: ID!) {
-          deleteWeek(id: $id) {
-            _id
-          }
-        }
-      `;
+  mutation DeleteWeek($id: String!) {
+    deleteWeek(id: $id) {
+      _id
+    }
+  }
+`;
   
       const variables = {
         id,
@@ -53,6 +53,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       const eliminarTarjetaBtn = eliminarTarjetaModalEl.querySelector("#eliminarTarjetaBtn");
 
+
       // Elimina el evento click existente para evitar múltiples clics
       eliminarTarjetaBtn.removeEventListener('click', handleClick);
 
@@ -62,15 +63,15 @@ document.addEventListener("DOMContentLoaded", async () => {
       async function handleClick() {
         await deleteWeekFromServer(weekId);
         deleteCard(weekId);
-
+  
         const backdrop = document.querySelector('.modal-backdrop');
         if (backdrop) {
           backdrop.remove();
         }
         eliminarTarjetaModal.hide();
       }
-
+  
       eliminarTarjetaModal.show();
-    }
-  });
+}
 });
+  });
