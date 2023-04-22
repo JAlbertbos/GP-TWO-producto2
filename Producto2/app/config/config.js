@@ -56,7 +56,7 @@ type Task {
   type Mutation {
     createWeek(week: WeekInput): Week
     deleteWeek(id: String): Week
-    createTask(task: TaskInput): Task
+    createTask(taskData: TaskInput!, weekId: ID!): Task
     updateTask(id: String, task: TaskInput): Task
     deleteTask(id: String): Task
   }
