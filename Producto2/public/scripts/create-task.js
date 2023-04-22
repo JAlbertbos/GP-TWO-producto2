@@ -1,10 +1,12 @@
 let tarjetaAEditar;
 let tarjetaSeleccionada;
 let selectedDay;
+let selectedCard;
 
 function allowDrop(event) {
   event.preventDefault();
 }
+
 
 function drop(event) {
   event.preventDefault();
@@ -145,12 +147,14 @@ function addCardToDOM(taskId, taskData, selectedDay) {
 
 
   const botonEliminar = tarjeta.querySelector('.eliminar-tarea');
-  botonEliminar.addEventListener('click', function () {
-    tarjetaSeleccionada = tarjeta.id;
-    const eliminarTareaModalEl = document.getElementById("eliminarTareaModal");
-    const eliminarTareaModal = new bootstrap.Modal(eliminarTareaModalEl);
-    eliminarTareaModal.show();
-  });
+botonEliminar.addEventListener('click', function () {
+  selectedCard = tarjeta;
+  const eliminarTareaModalEl = document.getElementById("eliminarTareaModal");
+  const eliminarTareaModal = new bootstrap.Modal(eliminarTareaModalEl);
+  eliminarTareaModal.show();
+});
+
+  
 
   const botonEditar = tarjeta.querySelector('.editar-tarea');
   botonEditar.addEventListener('click', function () {
@@ -170,8 +174,10 @@ function addCardToDOM(taskId, taskData, selectedDay) {
     horaFinal.value = horaFinalTexto;
     participantes.value = participantesTexto;
     ubicacion.value = ubicacionTexto;
-    tareaTerminadaCheckbox.checked = tareaTerminada;
-
+    if (tareaTerminadaCheckbox) {
+        tareaTerminadaCheckbox.checked = tareaTerminada;
+    }
+    
     const modal = new bootstrap.Modal(document.getElementById("formtask"));
     modal.show();
   });
@@ -182,27 +188,3 @@ function createTask(taskData, selectedDay) {
   const taskId = Date.now().toString();
   addCardToDOM(taskId, taskData, selectedDay);
 }
-
-// Eliminar tarea definitivamente
-document.getElementById("btnEliminarTareaDefinitivamente").addEventListener('click', function () {
-  if (tarjetaSeleccionada) {
-    const tarjeta = document.getElementById(tarjetaSeleccionada);
-    tarjeta.remove();
-    tarjetaSeleccionada = null;
-    const eliminarTareaModalEl = document.getElementById("eliminarTareaModal");
-    const eliminarTareaModal = bootstrap.Modal.getInstance(eliminarTareaModalEl);
-    eliminarTareaModal.hide();
-  }
-});
-
-// Evento click para eliminar tarea
-document.addEventListener("click", function (event) {
-  if (event.target.matches(".eliminar-tarea")) {
-    const card = event.target.closest(".card");
-    selectedCard = card;
-    // Mostrar el modal de confirmación de eliminación
-    const eliminarTareaModalEl = document.getElementById("eliminarTareaModal");
-    const eliminarTareaModal = new bootstrap.Modal(eliminarTareaModalEl);
-    eliminarTareaModal.show();
-  }
-});
