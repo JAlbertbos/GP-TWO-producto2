@@ -1,10 +1,12 @@
 let tarjetaAEditar;
 let tarjetaSeleccionada;
 let selectedDay;
+let selectedCard;
 
 function allowDrop(event) {
   event.preventDefault();
 }
+
 
 function drop(event) {
   event.preventDefault();
@@ -146,11 +148,13 @@ function addCardToDOM(taskId, taskData, selectedDay) {
 
   const botonEliminar = tarjeta.querySelector('.eliminar-tarea');
 botonEliminar.addEventListener('click', function () {
-  tarjetaSeleccionada = tarjeta;
+  selectedCard = tarjeta;
   const eliminarTareaModalEl = document.getElementById("eliminarTareaModal");
   const eliminarTareaModal = new bootstrap.Modal(eliminarTareaModalEl);
   eliminarTareaModal.show();
 });
+
+  
 
   const botonEditar = tarjeta.querySelector('.editar-tarea');
   botonEditar.addEventListener('click', function () {
