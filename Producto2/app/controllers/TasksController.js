@@ -33,7 +33,7 @@ exports.updateTaskById = async (id, updatedData) => {
     return await Task.findByIdAndUpdate(id, updatedData, { new: true });
   } catch (err) {
     console.error(err);
-    throw new Error("Error updating task");
+    throw new Error("Error actualizacion de tareas");
   }
 };
 
@@ -42,6 +42,6 @@ exports.deleteTaskById = async (id) => {
     await Task.findByIdAndRemove(id);
   } catch (err) {
     console.error(err);
-    throw new Error("Error deleting task");
+    throw new Error("Error eliminando tareas");
   }
 };

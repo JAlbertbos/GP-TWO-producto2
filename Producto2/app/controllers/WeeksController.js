@@ -24,7 +24,7 @@ exports.createWeek = async (weekData) => {
     return await newWeek.save();
   } catch (err) {
     console.error(err);
-    throw new Error("Error creating week");
+    throw new Error("Error creando semana");
   }
 };
 
@@ -33,6 +33,6 @@ exports.deleteWeekById = async (id) => {
       return await Week.findByIdAndRemove(id);
     } catch (err) {
       console.error(err);
-      throw new Error("Error deleting week");
+      throw new Error("Error borrando semana");
     }
   };
