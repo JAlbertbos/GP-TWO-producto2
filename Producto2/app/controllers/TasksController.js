@@ -5,7 +5,7 @@ exports.getTasks = async () => {
     return await Task.find().populate("week");
   } catch (err) {
     console.error(err);
-    throw new Error("Error retrieving tasks");
+    throw new Error("Error obteniendo tarea");
   }
 };
 
@@ -14,7 +14,7 @@ exports.getTaskById = async (id) => {
     return await Task.findById(id).populate("week");
   } catch (err) {
     console.error(err);
-    throw new Error("Error retrieving task");
+    throw new Error("Error obteniendo tarea");
   }
 };
 
@@ -24,7 +24,7 @@ exports.createTask = async (taskData) => {
     return await newTask.save();
   } catch (err) {
     console.error(err);
-    throw new Error("Error creating task");
+    throw new Error("Error creando tareas");
   }
 };
 
