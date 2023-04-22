@@ -2,11 +2,18 @@ function allowDrop(event) {
   event.preventDefault();
 }
 function drop(event) {
+  let dropzoneAncestor = event.target.closest('.dropzone');
+  
+  if (!dropzoneAncestor) {
+    return;
+  }
+
   event.preventDefault();
   var data = event.dataTransfer.getData("text");
   var element = document.getElementById(data);
-  event.target.appendChild(element);
+  dropzoneAncestor.appendChild(element);
 }
+
 
 let tarjetaAEditar;
 let selectedDay;
@@ -63,16 +70,13 @@ form.addEventListener('submit', function (event) {
     return;
   }
   if (tarjetaAEditar) {
-    // Actualizar la tarjeta existente
     tarjetaAEditar.querySelector('.card-title').innerText = nombreTarea.value;
     tarjetaAEditar.querySelector('.card-text').innerText = descripcion.value;
     tarjetaAEditar.querySelector('.list-group-item:nth-child(1)').innerText = `Hora de inicio: ${horaInicio.value}`;
     tarjetaAEditar.querySelector('.list-group-item:nth-child(2)').innerText = `Hora de final: ${horaFinal.value}`;
     tarjetaAEditar.querySelector('.list-group-item:nth-child(3)').innerText = `Participantes: ${participantes.value}`;
     tarjetaAEditar.querySelector('.list-group-item:nth-child(4)').innerText = `Ubicación: ${ubicacion.value}`;
-    tarjetaAEditar.querySelector('.form-check-input').checked = tareaTerminada.checked;
 
-    // Reiniciar la variable tarjetaAEditar
     tarjetaAEditar = null;
 
     
@@ -81,10 +85,9 @@ form.addEventListener('submit', function (event) {
     form.reset();
   } else {
     
-    // Crear la tarjeta con los datos del formulario
     const tarjeta = document.createElement('div');
-    const idTarjeta = Date.now().toString(); // Generar un ID único para la tarjeta
-    tarjeta.id = `tarjeta-${idTarjeta}`; // Agregar el ID a la tarjeta
+    const idTarjeta = Date.now().toString(); 
+    tarjeta.id = `tarjeta-${idTarjeta}`; 
     tarjeta.classList.add('card', 'my-3', 'draggable');
     tarjeta.innerHTML = `
     <div class="card-body">
@@ -134,7 +137,6 @@ form.addEventListener('submit', function (event) {
       }
     });
     
-    // Cerrar el modal y resetear el formulario
     const modal = bootstrap.Modal.getInstance(document.querySelector('#formtask'));
     modal.hide();
     form.reset();
@@ -168,13 +170,14 @@ form.addEventListener('submit', function (event) {
       horaFinal.value = horaFinalTexto;
       participantes.value = participantesTexto;
       ubicacion.value = ubicacionTexto;
-      tareaTerminada.checked = tareaTerminada;
+      //tareaTerminada.checked = tareaTerminada;
       
       // Mostrar el modal
       const modal = new bootstrap.Modal(document.getElementById("formtask"));
       modal.show();
       
     });
+    
     tarjeta.setAttribute('data-id', idTarjeta);
   }
   

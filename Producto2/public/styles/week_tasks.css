@@ -8,7 +8,7 @@
 
 
 body {
-  background-image: url('/Producto2/img/background.png');
+  background-image: url('../img/background.png');
   background-size: cover;
   background-attachment: fixed;
 }
