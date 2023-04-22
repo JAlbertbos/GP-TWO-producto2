@@ -1,4 +1,4 @@
-//Funciones API y otras movidas :
+//Funciones API
 
 function priorityToString(priority) {
   switch (parseInt(priority)) {
